@@ -26,7 +26,7 @@ module.exports = function (code, plugins, support) {
 	return stylecow.convert(code).toString();
 }
 
-},{"stylecow":50}],1:[function(require,module,exports){
+},{"stylecow":51}],1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
 var color = {
@@ -1372,6 +1372,149 @@ module.exports = function (stylecow) {
 
 },{}],25:[function(require,module,exports){
 module.exports = function (stylecow) {
+
+	stylecow.addTask([
+
+		// adds -moz- vendor prefix
+		{
+			disable: {
+				firefox: 10.0
+			},
+			"Function": {
+				'linear-gradient': function (fn) {
+					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+						fn.name = '-moz-linear-gradient';
+						fn[0].replaceWith(fixDirection(fn[0]));
+					});
+				}
+			}
+		},
+
+		// adds -o- vendor prefix
+		{
+			disable: {
+				opera: 12.1
+			},
+			"Function": {
+				'linear-gradient': function (fn) {
+					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+						fn.name = '-o-linear-gradient';
+						fn[0].replaceWith(fixDirection(fn[0]));
+					});
+				}
+			}
+		},
+
+		// adds -webkit- vendor prefix
+		{
+			disable: {
+				chrome: 26.0,
+				safari: 6.1,
+				ios: 7.0,
+				android: 4.4
+			},
+			"Function": {
+				'linear-gradient': function (fn) {
+					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+						fn.name = '-webkit-linear-gradient';
+						fn[0].replaceWith(fixDirection(fn[0]));
+					});
+				}
+			}
+		},
+
+		// adds the old syntax -webkit-gradient
+		{
+			disable: {
+				chrome: 10.0,
+				safari: 5.1,
+				android: 4.0
+			},
+			"Function": {
+				'linear-gradient': function (fn) {
+					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+						var newArgs = ['linear'];
+
+						//Calculate the gradient direction
+						var point = 'to bottom';
+
+						if (fn[0].is({name: /(top|bottom|left|right|deg)/})) {
+							point = fn.shift().toString();
+						}
+
+						switch (point) {
+							case 'to bottom':
+								newArgs.push('left top', 'left bottom');
+								break;
+
+							case 'to top':
+								newArgs.push('left bottom', 'left top');
+								break;
+
+							case 'to right':
+								newArgs.push('left top', 'right top');
+								break;
+
+							case 'to left':
+								newArgs.push('right top', 'left top');
+								break;
+
+							default:
+								if (/^\ddeg$/.test(point)) {
+									newArgs.push(parseInt(point, 10) + 'deg');
+								} else {
+									newArgs.push('left top', 'left bottom');
+								}
+						}
+
+						//Gradient colors and color stops
+						var total = fn.length - 1;
+
+						fn.forEach(function (param, i) {
+							var text;
+
+							if (i === 0) {
+								text = 'from';
+							} else if (i === total) {
+								text = 'to';
+							} else {
+								text = 'color-stop';
+							}
+
+							newArgs.push(text + '(' + param + ')');
+						});
+
+						//Apply the changes
+						fn.name = '-webkit-gradient';
+						fn.setValue(newArgs);
+					});
+				}
+			}
+		}
+	]);
+};
+
+function fixDirection (direction) {
+	switch (direction.toString()) {
+		case 'to top':
+			return 'bottom';
+
+		case 'to bottom':
+			return 'top';
+
+		case 'to left':
+			return 'right';
+
+		case 'to right':
+			return 'left';
+
+		default:
+			return direction;
+	}
+}
+
+},{}],26:[function(require,module,exports){
+module.exports = function (stylecow) {
 	
 	//Adds -webkit- vendor prefix
 
@@ -1390,7 +1533,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -o- vendor prefix
@@ -1410,7 +1553,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = function (stylecow) {
 	stylecow.addTask([
 		// Add -moz- vendor prefix in ::input-placeholder for Firefox > 18 and ::selection
@@ -1466,7 +1609,7 @@ module.exports = function (stylecow) {
 	]);
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = function (stylecow) {
 	stylecow.addTask([
 		// Adds -webkit- vendor prefix
@@ -1502,7 +1645,7 @@ module.exports = function (stylecow) {
 	]);
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 module.exports = function (stylecow) {
 	stylecow.addTask([
 		//Firefox supports "-moz-available" property rather than "-moz-fill-available"',
@@ -1545,7 +1688,7 @@ module.exports = function (stylecow) {
 	]);
 };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -webkit- vendor prefix
@@ -1567,7 +1710,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 module.exports = function (stylecow) {
 	stylecow.addTask([
 		//Add -moz- vendor prefix
@@ -1623,7 +1766,7 @@ module.exports = function (stylecow) {
 	]);
 };
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 module.exports = function (stylecow) {
 	stylecow.addTask([
 		// Adds -moz- vendor prefix
@@ -1725,7 +1868,7 @@ module.exports = function (stylecow) {
 	]);
 };
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 module.exports = function (stylecow) {
 	stylecow.addTask([
 		// Adds -moz- vendor prefix
@@ -1811,7 +1954,7 @@ module.exports = function (stylecow) {
 	]);
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = function (stylecow) {
 	stylecow.addTask([
 		// Adds -moz- vendor prefix
@@ -1855,7 +1998,7 @@ module.exports = function (stylecow) {
 	]);
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 (function (stylecow) {
 	stylecow.codeStyles = {
 		"normal": {
@@ -1904,7 +2047,7 @@ module.exports = function (stylecow) {
 
 })(require('./index'));
 
-},{"./index":50}],36:[function(require,module,exports){
+},{"./index":51}],37:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Argument = function () {
@@ -1921,7 +2064,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],37:[function(require,module,exports){
+},{"../index":51}],38:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.AtRule = function (name) {
@@ -1967,7 +2110,7 @@ module.exports = function (stylecow) {
 
 })(require('../index'));
 
-},{"../index":50}],38:[function(require,module,exports){
+},{"../index":51}],39:[function(require,module,exports){
 (function (stylecow) {
 	var Collection = function () {};
 
@@ -2414,7 +2557,7 @@ module.exports = function (stylecow) {
 
 })(require('../index'));
 
-},{"../index":50}],39:[function(require,module,exports){
+},{"../index":51}],40:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Comment = function (name) {
@@ -2453,7 +2596,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],40:[function(require,module,exports){
+},{"../index":51}],41:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Condition = function (name) {
@@ -2471,7 +2614,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],41:[function(require,module,exports){
+},{"../index":51}],42:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Declaration = function (name) {
@@ -2532,7 +2675,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],42:[function(require,module,exports){
+},{"../index":51}],43:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Function = function (name) {
@@ -2580,7 +2723,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],43:[function(require,module,exports){
+},{"../index":51}],44:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Keyword = function (name) {
@@ -2620,7 +2763,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],44:[function(require,module,exports){
+},{"../index":51}],45:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.NestedAtRule = function (name) {
@@ -2685,13 +2828,13 @@ module.exports = function (stylecow) {
 
 					if (string) {
 						if (child.type === 'Selector') {
-							selectors.push(child);
+							selectors.push(string);
 						} else if (child.type === 'Condition') {
-							conditions.push(child);
+							conditions.push(string);
 						} else if (child.type === 'Value') {
-							stringOut.push(child);
+							stringOut.push(string);
 						} else {
-							stringIn.push(child);
+							stringIn.push(string);
 						}
 					}
 				});
@@ -2740,7 +2883,7 @@ module.exports = function (stylecow) {
 
 })(require('../index'));
 
-},{"../index":50}],45:[function(require,module,exports){
+},{"../index":51}],46:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Root = function () {
@@ -2771,7 +2914,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],46:[function(require,module,exports){
+},{"../index":51}],47:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Rule = function () {
@@ -2873,7 +3016,7 @@ module.exports = function (stylecow) {
 
 })(require('../index'));
 
-},{"../index":50}],47:[function(require,module,exports){
+},{"../index":51}],48:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Selector = function () {
@@ -2897,7 +3040,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],48:[function(require,module,exports){
+},{"../index":51}],49:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Value = function () {
@@ -2920,7 +3063,7 @@ module.exports = function (stylecow) {
 	});
 })(require('../index'));
 
-},{"../index":50}],49:[function(require,module,exports){
+},{"../index":51}],50:[function(require,module,exports){
 (function (stylecow) {
 
 	stylecow.Error = function (message, data, prevError) {
@@ -2979,7 +3122,7 @@ module.exports = function (stylecow) {
 	};
 })(require('./index'));
 
-},{"./index":50}],50:[function(require,module,exports){
+},{"./index":51}],51:[function(require,module,exports){
 (function (stylecow) {
 	var fs = require('fs');
 
@@ -3123,7 +3266,7 @@ module.exports = function (stylecow) {
 
 })(require('./index'));
 
-},{"./config":35,"./css/argument":36,"./css/atrule":37,"./css/base":38,"./css/comment":39,"./css/condition":40,"./css/declaration":41,"./css/function":42,"./css/keyword":43,"./css/nested-atrule":44,"./css/root":45,"./css/rule":46,"./css/selector":47,"./css/value":48,"./error":49,"./index":50,"./parser":51,"fs":1}],51:[function(require,module,exports){
+},{"./config":36,"./css/argument":37,"./css/atrule":38,"./css/base":39,"./css/comment":40,"./css/condition":41,"./css/declaration":42,"./css/function":43,"./css/keyword":44,"./css/nested-atrule":45,"./css/root":46,"./css/rule":47,"./css/selector":48,"./css/value":49,"./error":50,"./index":51,"./parser":52,"fs":1}],52:[function(require,module,exports){
 (function (stylecow) {
     var collapsedSpaces = [' ', '\t', '\n', '\r'];
     var collapsedSelector = collapsedSpaces.concat(['>', '~', '+', ',', '{']);
@@ -3760,7 +3903,7 @@ module.exports = function (stylecow) {
 
 })(require('./index'));
 
-},{"./index":50}],"stylecow-plugin-color":[function(require,module,exports){
+},{"./index":51}],"stylecow-plugin-color":[function(require,module,exports){
 //http://dev.w3.org/csswg/css-color/
 
 var color = require('stylecow-color');
@@ -4434,6 +4577,7 @@ module.exports = function (stylecow) {
 	require('./src/document')(stylecow);
 	require('./src/fullscreen')(stylecow);
 	require('./src/inline-block')(stylecow);
+	require('./src/linear-gradient')(stylecow);
 	require('./src/grid')(stylecow);
 	require('./src/mask')(stylecow);
 	require('./src/object')(stylecow);
@@ -4447,7 +4591,7 @@ module.exports = function (stylecow) {
 	require('./src/user-select')(stylecow);
 };
 
-},{"./src/animation":12,"./src/appearance":13,"./src/background":14,"./src/border":15,"./src/box-shadow":16,"./src/box-sizing":17,"./src/calc":18,"./src/column":19,"./src/cursor":20,"./src/document":21,"./src/fullscreen":22,"./src/grid":23,"./src/inline-block":24,"./src/mask":25,"./src/object":26,"./src/pseudoelements":27,"./src/region":28,"./src/sizing":29,"./src/sticky":30,"./src/transform":31,"./src/transition":32,"./src/typography":33,"./src/user-select":34}],"stylecow-plugin-rem":[function(require,module,exports){
+},{"./src/animation":12,"./src/appearance":13,"./src/background":14,"./src/border":15,"./src/box-shadow":16,"./src/box-sizing":17,"./src/calc":18,"./src/column":19,"./src/cursor":20,"./src/document":21,"./src/fullscreen":22,"./src/grid":23,"./src/inline-block":24,"./src/linear-gradient":25,"./src/mask":26,"./src/object":27,"./src/pseudoelements":28,"./src/region":29,"./src/sizing":30,"./src/sticky":31,"./src/transform":32,"./src/transition":33,"./src/typography":34,"./src/user-select":35}],"stylecow-plugin-rem":[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	stylecow.addTask({
@@ -4520,16 +4664,24 @@ function toPixels (value) {
 module.exports = function (stylecow) {
 
 	stylecow.addTask({
+
 		//Use var() function
 		"Function": {
 			var: function (fn) {
 				var arguments = fn.getContent();
-				var value = fn.parent({type: 'Rule'}).getData(arguments[0]) || arguments[1];
+				var value = fn.parent({type: 'Rule'}).getData(arguments[0]);
 
 				if (value) {
-					fn.replaceWith(value);
+					if (fn.parent().is({type: ['Value', 'Argument']}) && (value.length > 1)) {
+						return fn.parent().setContent(value);
+					}
+
+					return fn.replaceWith(value.join(' '));
 				}
 
+				if (arguments[1]) {
+					fn.replaceWith(arguments[1]);
+				}
 			}
 		},
 
@@ -4539,9 +4691,9 @@ module.exports = function (stylecow) {
 				var rule = declaration.parent({type: 'Rule'});
 
 				if (rule.hasChild({type: 'Selector', string: [':root', 'html']})) {
-					rule.parent({type: 'Root'}).setData(declaration.name, declaration.value);
+					rule.parent({type: 'Root'}).setData(declaration.name, declaration.getContent());
 				} else {
-					rule.setData(declaration.name, declaration.value);
+					rule.setData(declaration.name, declaration.getContent());
 				}
 
 				declaration.remove();
