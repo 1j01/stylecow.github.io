@@ -204,14 +204,14 @@ var code = css.toCode();
 }
 </code></pre>
 
-                <p>If you are a Gulp-guy, there is <a href="https://github.com/stylecow/gulp-stylecow">a gulp plugin:</a>
+                <p>Or if you are a Gulp-guy, here is <a href="https://github.com/stylecow/gulp-stylecow">your plugin:</a>
 
 <pre><code>var gulp = require('gulp');
 var stylecow = require('gulp-stylecow');
 
 gulp.task('stylecow', function() {
   gulp.src('./css/styles.css')
-    .pipe(stylecow(require('./stylecow.json)))
+    .pipe(stylecow(require('./stylecow.json')))
     .pipe(gulp.dest('./dist/'))
 });
 </code></pre>
