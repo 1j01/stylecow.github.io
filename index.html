@@ -25,7 +25,7 @@
                 <ul class="nav">
                     <li><a href="index.html#quick-start">Quick start</a></li>
                     <li><a href="index.html#cli">Cli</a></li>
-                    <li><a href="index.html#grunt">Grunt</a></li>
+                    <li><a href="index.html#grunt">Grunt/Gulp</a></li>
                     <li><a href="index.html#plugins">Plugins</a></li>
                     <li><a href="docs.html">Docs</a></li>
                     <li><a href="api.html">API</a></li>
@@ -142,7 +142,7 @@ var code = css.toCode();
 
                 
 
-                <h2 id="grunt">Using with Grunt</h2>
+                <h2 id="grunt">Using with Grunt/Gulp</h2>
 
                 <p>Are you one of these guys? No problem, there is <a href="https://github.com/stylecow/grunt-stylecow">a grunt plugin</a> available that you can install with npm:</p>
 
@@ -204,6 +204,17 @@ var code = css.toCode();
 }
 </code></pre>
 
+                <p>If you are a Gulp-guy, there is <a href="https://github.com/stylecow/gulp-stylecow">a gulp plugin:</a>
+
+<pre><code>var gulp = require('gulp');
+var stylecow = require('gulp-stylecow');
+
+gulp.task('stylecow', function() {
+  gulp.src('./css/styles.css')
+    .pipe(stylecow(require('./stylecow.json)))
+    .pipe(gulp.dest('./dist/'))
+});
+</code></pre>
 
 
 
