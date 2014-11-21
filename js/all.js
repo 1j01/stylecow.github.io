@@ -2994,7 +2994,7 @@ module.exports = function (stylecow) {
 			},
 			"Function": {
 				'linear-gradient': function (fn) {
-					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+					fn.parent({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
 						fn.name = '-moz-linear-gradient';
 						fn[0].replaceWith(fixDirection(fn[0]));
 					});
@@ -3009,7 +3009,7 @@ module.exports = function (stylecow) {
 			},
 			"Function": {
 				'linear-gradient': function (fn) {
-					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+					fn.parent({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
 						fn.name = '-o-linear-gradient';
 						fn[0].replaceWith(fixDirection(fn[0]));
 					});
@@ -3027,7 +3027,7 @@ module.exports = function (stylecow) {
 			},
 			"Function": {
 				'linear-gradient': function (fn) {
-					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+					fn.parent({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
 						fn.name = '-webkit-linear-gradient';
 						fn[0].replaceWith(fixDirection(fn[0]));
 					});
@@ -3044,7 +3044,7 @@ module.exports = function (stylecow) {
 			},
 			"Function": {
 				'linear-gradient': function (fn) {
-					fn.ancestor({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
+					fn.parent({type: 'Declaration'}).cloneBefore().search({type: 'Function', name: 'linear-gradient'}).forEach(function (fn) {
 						var newArgs = ['linear'];
 
 						//Calculate the gradient direction
@@ -3098,7 +3098,7 @@ module.exports = function (stylecow) {
 
 						//Apply the changes
 						fn.name = '-webkit-gradient';
-						fn.setValue(newArgs);
+						fn.setContent(newArgs);
 					});
 				}
 			}
@@ -8893,7 +8893,7 @@ module.exports = function (stylecow) {
 
 				if (value) {
 					if (fn.parent().is({type: ['Value', 'Argument']}) && (value.length > 1)) {
-						return fn.parent().setContent(value);
+						return fn.parent().setContent(value.join(','));
 					}
 
 					return fn.replaceWith(value.join(' '));
