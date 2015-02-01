@@ -21,8 +21,7 @@
             <nav class="page-navigation">
                 <ul class="nav">
                     <li><a href="index.html#quick-start">Quick start</a></li>
-                    <li><a href="index.html#cli">Cli</a></li>
-                    <li><a href="index.html#grunt">Grunt</a></li>
+                    <li><a href="index.html#grunt">Grunt/Gulp</a></li>
                     <li><a href="index.html#plugins">Plugins</a></li>
                     <li><a href="docs.html">Docs</a></li>
                     <li><a class="selected" href="api.html">API</a></li>
@@ -51,12 +50,12 @@
                     <ul>
                         <li><a href="#api-clone">.clone()</a></li>
                         <li><a href="#api-clonebefore">.cloneBefore() | .cloneAfter()</a></li>
-                        <li><a href="#api-add">.add()</a></li>
-                        <li><a href="#api-insertbefore">.before() | .after()</a></li>
+                        <li><a href="#api-push">.push() | .unshift() | .splice()</a></li>
+                        <li><a href="#api-before">.before() | .after()</a></li>
                         <li><a href="#api-replacewith">.replaceWith()</a></li>
                         <li><a href="#api-remove">.remove()</a></li>
+                        <li><a href="#api-detach">.detach()</a></li>
                         <li><a href="#api-empty">.empty()</a></li>
-                        <li><a href="#api-getcontent">.getContent() | .setContent()</a></li>
                     </ul>
                 </nav>
 
@@ -64,9 +63,10 @@
                 <nav>
                     <strong>Miscelaneous:</strong>
                     <ul>
-                        <li><a href="#api-setvalue">.setValue() | .getValue()</a></li>
+                        <li><a href="#api-toarray">.toArray()</a></li>
                         <li><a href="#api-getdata">.setData() | .getData()</a></li>
                         <li><a href="#api-index">.index()</a></li>
+                        <li><a href="#api-set">.set()</a></li>
                     </ul>
                 </nav>
             </div>
@@ -78,8 +78,9 @@
 
                 <ul>
                     <li><strong>type:</strong> to test the element type (Rule, Declaration, Function, etc)</li>
-                    <li><strong>name:</strong> to test the element name (some elements like Rule or Selector has not name)</li>
+                    <li><strong>name:</strong> to test the element name (some elements like Rule or Selector don't have name)</li>
                     <li><strong>vendor:</strong> to test the element vendor prefix</li>
+                    <li><strong>string:</strong> to test the stringified element</li>
                 </ul>
 
                 <p>Usage example:</p>
@@ -92,62 +93,48 @@
 }   
 </code></pre>
 
-<pre><code>//Parse the code:
-var code = require('stylecow').parseFile('styles.css');
+<pre><code>//Get the first declaration:
+var declaration = code.searchFirst('Declaration');
 
-//Get the first rule:
-var rule = code[0];
+//Use an object to check conditions:
+console.log(declaration.is({
+    type: 'Declaration',
+    name: 'border-radius'
+}));
+// true
 
-//Check the declarations named "border-radius" in the rule
-rule.forEach(function (declaration) {
-    console.log(declaration.is({
-        type: 'Declaration',
-        name: 'border-radius'
-    }));
-});
+//You can use a string to check only the type
+console.log(declaration.is('Declaration'));
+// true
 
-/*
-true
-false
-false
-true
-*/
+//Check the stringify object
+console.log(declaration.is({
+    string: 'border-radius: 3px;'
+}));
+// true
+
+//Check the stringify object
+console.log(declaration.is({
+    string: 'border-radius: 4px;'
+}));
+// false
 
 //Use arrays to search between various values:
-rule.forEach(function (declaration) {
-    console.log(declaration.is({
-        type: 'Declaration',
-        name: ['border-radius', 'font-size']
-    }));
-});
-
-/*
-true
-true
-false
-true
-*/
+console.log(declaration.is({
+    name: ['border-radius', 'font-size']
+}));
+// true
 
 //Or even a regular expression:
-rule.forEach(function (declaration) {
-    console.log(declaration.is({
-        type: 'Declaration',
-        name: /^border-/
-    }));
-});
-
-/*
-true
-false
-true
-true
-*/
-
+console.log(declaration.is({
+    name: /^border-/
+}));
+// true
 </code></pre>
 
                 <h3 id="api-children">.children()</h3>
 
-                <p>Returns the direct children of an object. You can provide a filter to return only the children matching with some conditions.</p>
+                <p>Returns a collection with the direct children of an object. You can provide a filter to return only the children matching with some conditions.</p>
 
 <pre><code>body {
     color: blue;
@@ -164,24 +151,19 @@ true
 }
 </code></pre>
 
-<pre><code>//Parse the code:
-var code = require('stylecow').parseFile('styles.css');
-
-//Get all children:
+<pre><code>//Get all children:
 var result = code.children();
 
 console.log(result.length); //3
 
-//Get only the objects of type "NestedAtRule"
-var result = code.children({
-    type: 'NestedAtRule'
-});
+//Get only the objects of type "AtRule"
+var result = code.children('AtRule');
 
 console.log(result.length); //2
 
 //Get only the @media objects:
 var result = code.children({
-    type: 'NestedAtRule',
+    type: 'AtRule',
     name: 'media'
 });
 
@@ -190,7 +172,7 @@ console.log(result.length); //1
 
                 <h3 id="api-firstChild">.firstChild()</h3>
 
-                <p>It's like <code>.children()</code> but returns the first result found instead an array with all objects, and of course, you can provide a filter.</p>
+                <p>It's like <code>.children()</code> but returns the first result found instead an a collection with all elements, and of course, you can provide a filter.</p>
 
                 <h3 id="api-haschild">.hasChild()</h3>
 
@@ -202,21 +184,18 @@ console.log(result.length); //1
 }   
 </code></pre>          
 
-<pre><code>//Parse the code and get the first rule
-var code = require('stylecow').parseFile('styles.css');
-var rule = code.firstChild({type: 'Rule'});
+<pre><code>var ruleBlock = code.firstChild('Block');
 
-//Check if the rule has a "border-radius" statement
-rule.hasChild({type: 'Declaration', name: 'border-radius'}); //true
+//Check if the rule block has a "border-radius" statement
+ruleBlock.hasChild({type: 'Declaration', name: 'border-radius'}); //true
 
 //Check if the rule has a "color" statement
-rule.hasChild({type: 'Declaration', name: 'color'}); //false
-
+ruleBlock.hasChild({type: 'Declaration', name: 'color'}); //false
 </code></pre>
 
                 <h3 id="api-search">.search()</h3>
 
-                <p>It's like <code>.children()</code> but search recursively in cascade and returns an array with all results found.</p>
+                <p>It's like <code>.children()</code> but search recursively in cascade and returns a collection with all results found.</p>
 
 <pre><code>body {
     color: blue;
@@ -227,10 +206,7 @@ p {
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Search all keywords named "blue" and change to "green":
+<pre><code>//Search all keywords named "blue" and change to "green":
 code.search({
     type: 'Keyword',
     name: 'blue'
@@ -270,10 +246,7 @@ p {
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Search the font-family declaration:
+<pre><code>//Search the font-family declaration:
 var declaration = code.searchFirst({
     type: 'Declaration',
     name: 'font-family'
@@ -299,23 +272,17 @@ console.log(prev.toString()); // "color: blue"
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Search the "red" keyword:
+<pre><code>//Search the "red" keyword:
 var red = code.searchFirst({
     type: 'Keyword',
     name: 'red'
 });
 
 //Get the inmediate parent:
-console.log(red.parent()); // [Object Value]
+console.log(red.parent().type); // Value
 
 //Get the declaration parent:
-console.log(red.parent({type: 'Declaration'})); // [Object Declaration]
-
-//Get the declaration parent:
-console.log(red.parent({type: 'Rule'})); // [Object Rule]
+console.log(red.parent('Declaration').type); // Declaration
 </code></pre>
 
                 <h3 id="api-clone">.clone()</h3>
@@ -327,10 +294,7 @@ console.log(red.parent({type: 'Rule'})); // [Object Rule]
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Get the border-radius declaration:
+<pre><code>//Get the border-radius declaration:
 var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
 
 //Clone the declaration
@@ -350,10 +314,7 @@ console.log(cloned.toString()); // -moz-border-radius: 1px;
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Get the border-radius declaration:
+<pre><code>//Get the border-radius declaration:
 var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
 
 //Clone the declaration, insert before and change the name:
@@ -382,98 +343,44 @@ body {
 */
 </code></pre>
 
-                <h3 id="api-add">.add()</h3>
+                <h3 id="api-push">.push() | .unshift() | .splice()</h3>
 
-                <p>Adds new childrens to the object. The children can be css code or instances of css elements. You can specify the position of the new objects. This function returns the element added.</p>
+                <p>This functions are like the Array.prototype ones, but only css elements object are allowed.</p>
 
-<pre><code>//Creates a new rule
-var rule = new stylecow.Rule();
+<pre><code>//Creates a new declaration
+var declaration = stylecow.Declaration.createFromString('font-family: Arial');
 
-//Creates a css selector
-var selector = new stylecow.Selector();
+//Creates a new value
+var value = new stylecow.Value.createFromString('sans-serif');
 
-//Adds a keyword to the selector
-selector.add(new stylecow.Keyword('body'));
+//Push the value into the declaration
+declaration.push(value);
 
-//Add the selector to the rule
-rule.add(selector);
+console.log(declaration.toString()); // font-family: Arial, sans-serif;
 
-console.log(rule.toString());
-/*
-body {
-}
-*/
+//Creates a new value
+var value2 = new stylecow.Value.createFromString('Helvetica');
 
-//Adds a declaration as string
-rule.add('color: blue');
+//Unshift the value into the declaration
+declaration.unshift(value2);
 
-console.log(rule.toString());
-/*
-body {
-    color: blue;
-}
-*/
-
-//Add a new declaration in the position "1"
-rule.add('font-family: Arial', 1);
-
-console.log(rule.toString());
-/*
-body {
-    font-family: Arial;
-    color: blue;
-}
-*/
-
-//Add a new declaration as object
-var declaration = rule.add(new stylecow.Declaration('border-radius'));
-
-//Add a value to the declaration
-var value = declaration.add(new stylecow.Value());
-
-//Add a keyword to this value
-value.add(new stylecow.Keyword('6px'));
-
-console.log(rule.toString());
-/*
-body {
-    font-family: Arial;
-    color: blue;
-    border-radius: 6px;
-}
-*/
-
-//Or use the chaining to do the same in one line:
-rule.add(new stylecow.Declaration('font-size')).add(new stylecow.Value).add(new stylecow.Keyword('2em'));
-
-console.log(rule.toString());
-/*
-body {
-    font-family: Arial;
-    color: blue;
-    border-radius: 6px;
-    font-size: 2em;
-}
-*/
+console.log(declaration.toString()); // font-family: Helvetica, Arial, sans-serif;
 </code></pre>
 
                 <h3 id="api-before">.before() | .after()</h3>
 
-                <p>Adds new children as siblings after or before the object. As <code>.add().</code>, the children can be defined as string or instances of css elements, and returns the element added.</p>
+                <p>Adds new children as siblings after or before the object.</p>
 
 <pre><code>body {
     border-radius: 1px;
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Get the border-radius declaration:
+<pre><code>//Get the border-radius declaration:
 var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
 
 //Insert a new element before:
-declaration.before(new stylecow.Declaration('color')).add(new stylecow.Value()).add(new stylecow.Keyword('blue'));
+declaration.before(stylecow.Declaration.createFromString('color: blue'));
 
 console.log(code.toString());
 /*
@@ -483,26 +390,13 @@ body {
 }
 */
 
-//Insert a new element using a string:
-declaration.before('font-size: 12px');
-
-console.log(code.toString());
-/*
-body {
-    color: blue:
-    font-size: 12px;
-    border-radius: 1px;
-}
-*/
-
 //Insert a new element after
-declaration.after('background: gray');
+declaration.after(stylecow.Declaration.createFromString('background: gray'));
 
 console.log(code.toString());
 /*
 body {
     color: blue:
-    font-size: 12px;
     border-radius: 1px;
     background: gray;
 }
@@ -511,7 +405,7 @@ body {
 
                 <h3 id="api-replacewith">.replaceWith()</h3>
 
-                <p>Replaces the current object with a new one. As <code>.add()</code>, <code>.before()</code> or <code>.after()</code>, the new element can be an instance or a string and returns the inserted element:</p>
+                <p>Replaces the current object with a new one.</p>
 
 <pre><code>body {
     font-size: 1em;
@@ -519,14 +413,11 @@ body {
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Get the color declaration:
+<pre><code>//Get the color declaration:
 var declaration = code.searchFirst({type: 'Declaration', name: 'color'});
 
-//Replace the declaration by other, using a string:
-declaration.replaceWith('background: red');
+//Replace the declaration by other:
+declaration.replaceWith(stylecow.Declaration.createFromString('background: red'));
 
 console.log(code.toString());
 /*
@@ -539,7 +430,7 @@ body {
 
                 <h3 id="api-remove">.remove()</h3>
 
-                <p>Removes the element from its parent.</p>
+                <p>Removes the element.</p>
 
 <pre><code>body {
     font-size: 1em;
@@ -547,13 +438,10 @@ body {
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Get the color declaration:
+<pre><code>//Get the color declaration:
 var declaration = code.searchFirst({type: 'Declaration', name: 'color'});
 
-//Remove it from the rule
+//Remove it
 declaration.remove();
 
 console.log(code.toString());
@@ -563,6 +451,10 @@ body {
 }
 */
 </code></pre>
+
+                <h3 id="api-detach">.detach()</h3>
+
+                <p>Detach the element from its parent. It's similar to <code>.remove()</code> but it less destructive (.remove() destroy the object and it's children recursively).</p>
 
                 <h3 id="api-empty">.empty()</h3>
 
@@ -574,10 +466,7 @@ body {
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Empty the rule
+<pre><code>//Empty the rule
 code.searchFirst({type: 'Rule'}).empty();
 
 console.log(code.toString());
@@ -587,40 +476,22 @@ body {
 */
 </code></pre>
 
-                <h3 id="api-getcontent">.getContent() | .setContent()</h3>
+                <h3 id="api-toarray">.toArray()</h3>
 
-                <p><code>.getContent()</code> returns an array with all children of the element as a string. Use <code>.setContent()</code> to set new children using a string or an array of strings.</p>
+                <p>Returns an array with all children of the element as a string.</p>
 
 <pre><code>body {
     background: rgba(100, 150, 200, 0.5);
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Get the rgba function:
+<pre><code>//Get the rgba function:
 var rgba = code.searchFirst({type: 'Function', name: 'rgba'});
 
-console.log(rgba.getContent());
+console.log(rgba.toArray());
 /*
 ['100', '150', '200', '0.5']
 */
-
-
-//Set new content using a string:
-rgba.setContent('10, 30, 200, 0.5');
-
-console.log(rgba.getContent());
-// ['10', '30', '200', '0.5']
-
-
-//Set new content using an array:
-rgba.setContent(['97', '130', '100', '0.75']);
-
-console.log(rgba.getContent());
-// ['97', '130', '100', '0.75']
-
 </code></pre>
 
                 <h3 id="api-setvalue">.setData() | .getData()</h3>
@@ -641,16 +512,13 @@ console.log(rgba.getContent());
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-//Save a value in the root
-code.setData('color', 'red');
+<pre><code>//Save a value in the root
+code.setData('bar', 'foo');
 
 //Select the font-weight declaration:
 var font_weight = code.searchFirst({type: 'Declaration', name: 'font-weight'});
 
-console.log(font_weight.getData('color')); //red
+console.log(font_weight.getData('bar')); //foo
 </code></pre>
 
                 <h3 id="api-index">.index()</h3>
@@ -663,15 +531,36 @@ console.log(font_weight.getData('color')); //red
 }
 </code></pre>
 
-<pre><code>//Parse the code
-var code = require('stylecow').parseFile('styles.css');
-
-console.log(code.searchFirst({type: 'Declaration', name: 'color'}).index());
+<pre><code>console.log(code.searchFirst({type: 'Declaration', name: 'color'}).index());
 // 0
 
 console.log(code.searchFirst({type: 'Declaration', name: 'background'}).index());
 // 1
 </code></pre>
+                <h3 id="api-set">.set()</h3>
+
+                <p>Set properties to the element. Useful to modifications in a chain:</p>
+
+<pre><code>body {
+    border-radius: 1px;
+}
+</code></pre>
+
+<pre><code>//Get the border-radius declaration:
+var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
+
+//Clone before and modify the name
+declaration.cloneBefore().set('name', '-moz-border-radius');
+
+console.log(code.toString());
+/*
+body {
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+}
+*/
+</code></pre>
+
             </div>
         </main>
 <script>

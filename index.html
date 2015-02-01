@@ -16,7 +16,7 @@
             <header class="page-header">
                 <h1 class="visually-hidden">stylecow</h1>
                 <img src="css/stylecow.svg">
-                <p>Modern CSS to all browsers</p>
+                <p>Modern CSS for all browsers</p>
                 <small>*made with churrasco</small>
                 <a href="https://github.com/stylecow/stylecow" class="image forkme">Fork me on Github</a>
             </header>
@@ -24,7 +24,6 @@
             <nav class="page-navigation">
                 <ul class="nav">
                     <li><a href="index.html#quick-start">Quick start</a></li>
-                    <li><a href="index.html#cli">Cli</a></li>
                     <li><a href="index.html#grunt">Grunt/Gulp</a></li>
                     <li><a href="index.html#plugins">Plugins</a></li>
                     <li><a href="docs.html">Docs</a></li>
@@ -35,84 +34,37 @@
             <div class="page-content">
                 <h2>Why another CSS preprocessor?</h2>
 
-                <p>The main purpose of stylecow is to bring more CSS support to all browsers. Stylecow converts your code to be more compatible with all browsers adding vendor prefixes, fixing issues, generating polyfills, etc.</p>
+                <p>The main purpose of stylecow is support modern CSS in all browsers. Stylecow transform your code to be compatible with all browsers adding vendor prefixes, fixing issues, generating polyfills, etc.</p>
 
                 <p>You can play also with latests (or futures) css features such variables, nested rules or color manipulation using the w3c syntax. This mean you don't have to learn another language such LESS or SASS to use variables or color manipulation, you write css and you get css, and if you stop using stylecow, your css code remains css code.</p>
 
                 <h2 id="quick-start">Quick start</h2>
 
-                <p>Use npm to install the library and the plugins to use. The best way is creating a <code>package.json</code> file with the modules name:</p>
-<pre><code>{
-  "dependencies": {
-    "stylecow": "*",
-    "stylecow-plugin-color": "*",
-    "stylecow-plugin-variables": "*",
-    "stylecow-plugin-nested-rules": "*"
-  }
-}
-</code></pre>
+                <p>Use npm to install the library. Add <code>-g</code> if you want install it globally:</p>
 
-                <p>And then use npm to install:</p>
+                <pre><code>npm install stylecow -g</code></pre>
 
-                <pre><code>npm install</code></pre>
+                <p>Now you have the <code>stylecow</code> command with some useful utilities. The next step is create a json file with the configuration of the css conversion. You can create it in an interactive way using the command:</p>
 
-                <p>Now you have to create the javascript file to execute it:</p>
+                <pre><code>npm stylecow init</code></pre>
 
-<pre><code>var stylecow = require('stylecow');
+                <p>In this process, you have to define the following settings:</p>
 
-stylecow.setConfig({
-
-    //Minimal browser supported
-    support: {
-        explorer: 8,
-        firefox: 30,
-        chrome: 35,
-        safari: 5,
-        opera: 22,
-        android: 4,
-        ios: 6
-    },
-
-    //Plugins to execute (without "stylecow-plugin-")
-    plugins: [
-        "color",
-        "variables",
-        "nested-rules"
-    ],
-
-    //Code style used (normal or minify)
-    code: "minify"
-});
-
-//Load and convert a css file
-css = stylecow.convertFromFile("styles.css");
-
-//Create a new css coder
-var code = new stylecow.Code(css, {
-    output: 'styles.min.css', //output filename
-    style: 'minify', //minify the code
-    sourceMap: true  //generate a source-map file
-});
-
-//Save the minified code and its sourcempa
-code.save();
-</code></pre>
-        
-                <h2 id="cli">Command line interface</h2>
-
-                <p>A better way to execute stylecow is using the command line interface. To do that, you need to install the <a href="https://github.com/stylecow/stylecow-cli">stylecow-cli module</a>. Use <code>-g</code> for global installation:</p>
-
-                <pre><code>npm install stylecow-cli -g</code></pre>
-
-                <p>Now there is the <code>stylecow</code> command available with some useful utilities. As you need a json file with the configuration, you can  create it in an interactive way:</p>
-
-                <pre><code>stylecow init</code></pre>
+                <ul>
+                    <li><strong>support:</strong> Minimum version supported by the browsers explorer, firefox, chrome, safari, opera, android and ios</li>
+                    <li><strong>plugins:</strong> The plugins you want to use in the conversion (see below)</li>
+                    <li><strong>code:</strong> Style used to ouput the css code. For example: normal and minify</li>
+                    <li><strong>input:</strong> path of the css file to convert</li>
+                    <li><strong>output:</strong> path of the file where save the result</li>
+                    <li><strong>map:</strong> whether or not generate the source map</li>
+                </ul>
 
                 <p>A typical config file looks like:</p>
 
                 <pre><code>{
     "input": "styles.css",
     "output": "styles.min.css",
+    "map": "styles.min.map",
     "support": {
         "explorer": 8,
         "firefox": 30,
@@ -130,24 +82,20 @@ code.save();
     "code": "minify"
 }
 </code></pre>
-                <p>The input and output properties are optional you can define them later using <code>--input</code> and <code>--output</code> options</p>
-
-                <p>To execute the config file:</p>
+                <p>By default the configuration file is saved as <code>stylecow.json</code> but you can choose a different name. To execute it:</p>
 
                 <pre><code>stylecow execute stylecow.json</code></pre>
 
-                <p>You can use simply <code>stylecow execute</code> if your config file is "stylecow.json" (the default name).</p>
+                <p>You can use simply <code>stylecow execute</code> if your config file is "stylecow.json" (the default name). This command has the following options:</p>
 
-                <p>The option <code>--watch</code> keeps stylecow watching the css files to regenerate the output code when changes are detected.</p>
-
-                <p>If you want your browser reloads the css automatically, use the option <code>--socket</code> to create a websocket server that comunicates with your browser and reloads the css when changes are detected (you don't need use <code>--watch</code> with <code>--socket</code> because it's done automatically). When a websocket is created, some javascript code is needed to place in the html, but you can create a bookmarklet to get always available, like this:<br>
-
-                <a href="javascript:(function(){var ws;function socket(){ws=new WebSocket('ws://127.0.0.1:8080');ws.onmessage=function(e){Array.prototype.forEach.call(document.querySelectorAll('link[rel=\"stylesheet\"]'),function(link){link.href=link.href.replace(/\?.*/,'')+'?t='+(new Date).getTime();});};}setInterval(function(){if(ws){if(ws.readyState!==1){socket();}}else{socket();}},1000);})();">stylecow live reload</a>
-                </p>
-
-                <p>Use <code>stylecow execute -h</code> to view all available options.</p>
-
-                
+                <ul>
+                    <li><code>-i, --input &lt;file&gt;</code> To use other input file instead the defined in the config file</li>
+                    <li><code>-o, --output &lt;file&gt;</code> To use other output file instead the defined in the config file</li>
+                    <li><code>-c, --code &lt;name&gt;</code> To use other code style instead the defined in the config file</li>
+                    <li><code>-m, --map &lt;dest&gt;</code> Generate the source map. It can be "false" (no source map), "embed" (in the output file) or a filename to save in an external file.</li>
+                    <li><code>-w, --watch</code> To watch the changes in the input file and generate the output automatically</li>
+                    <li><code>-r, --live-reload</code> Live reload the css in the browser when the output changes (using a websocket)</li>
+                </ul>
 
                 <h2 id="grunt">Using with Grunt/Gulp</h2>
 
@@ -157,46 +105,10 @@ code.save();
 
                 <p>Now, you can register and configurate it in the Grunt file:</p>
 
-                <pre><code>module.exports = function(grunt) {
-    grunt.initConfig({
-        stylecow: {
-            options: {
-                "support": {
-                    "explorer": 10,
-                    "firefox": 30,
-                    "chrome": 35,
-                    "safari": 6,
-                    "opera": 22,
-                    "android": 4,
-                    "ios": 6
-                },
-                "plugins": [
-                    "color",
-                    "variables",
-                    "nested-rules"
-                ],
-                "code": "normal"
-            },
-            dist: {
-                files: {
-                    'css/styles.min.css': ['./css/styles.css']
-                }
-            }
-        }
-    });
-
-    grunt.loadNpmTasks('grunt-stylecow');
-
-    grunt.registerTask('default', ['stylecow']);
-}
-</code></pre>
-
-                <p>Or if there is a config file that you want to reuse:</p>
-
 <pre><code>module.exports = function(grunt) {
     grunt.initConfig({
         stylecow: {
-            options: require('./stylecow.json'),
+            options: require('./stylecow.json'), //Your config file
             dist: {
                 files: {
                     'css/styles.min.css': ['./css/styles.css']
@@ -227,7 +139,7 @@ gulp.task('stylecow', function() {
 
                 <h2 id="plugins">Plugins</h2>
 
-                <p>All stylecow operations are done via plugins. There are several plugins available, for example, to play with variables using the <a href="http://www.w3.org/TR/css-variables/">w3c syntax</a>, to manipulate the colors using the <a href="http://dev.w3.org/csswg/css-color/">CSS Colors Module Level 4 syntax</a>, to play with the latest syntax of <a href="http://www.w3.org/TR/css3-flexbox/">flexbox</a> generating the old syntax for ie10 and webkit browsers, etc...</p>
+                <p>All stylecow operations are done via plugins. There are several plugins available, for example, to play with variables using the <a href="http://www.w3.org/TR/css-variables/">w3c syntax</a>, to manipulate the colors using the <a href="http://dev.w3.org/csswg/css-color/">CSS Colors Module Level 4 syntax</a>, to play with the latest syntax of <a href="http://www.w3.org/TR/css3-flexbox/">flexbox</a> generating the old syntax for ie10 and webkit browsers, etc... All these plugins are included in your stylecow installation, so no extra installations are required.</p>
 
                 <p>The available plugins are the following:</p>
 
@@ -279,14 +191,6 @@ gulp.task('stylecow', function() {
                             To insert the code of the <code>@import</code> rules with relative urls
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <a href="https://github.com/stylecow/stylecow-plugin-source-comment">source-comment:</a>
-                        </td>
-                        <td>
-                            Adds comments like <code>/* css/styles.css:12 */</code> before with the location of each rule in the original code
-                        </td>
-                    </tr>
                 </table>
 
                 <h3>Code fixing:</h3>
@@ -306,14 +210,6 @@ gulp.task('stylecow', function() {
                         </td>
                         <td>
                             To use the latest syntax of flexbox, generating the fallback for browsers supporting deprecated syntax.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="https://github.com/stylecow/stylecow-plugin-initial">initial:</a>
-                        </td>
-                        <td>
-                            Add support for <code>initial</code> value
                         </td>
                     </tr>
                     <tr>
@@ -362,189 +258,12 @@ gulp.task('stylecow', function() {
                         </td>
                     </tr>
                 </table>
-
-                <h2 id="demo">Try the demo!</h2>
             </div>
-
-            <form class="demo">
-                <div class="demo-code">
-                    <label>
-                        Input: <a href="css/styles.css" class="code-loader">(Use the CSS of this page)</a>
-                        <textarea id="input-code" placeholder="Paste here your css code"></textarea>
-                    </label>
-                    <button type="submit">Convert &rarr;</button>
-                    <label>
-                        Output:
-                        <textarea id="output-code"></textarea>
-                    </label>
-                </div>
-
-                <div class="demo-options">
-                    <ul class="demo-plugins">
-                        <li>
-                            <strong>Plugins:</strong>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="color">
-                                color
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="fixes">
-                                fixes
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="flex">
-                                flex
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="initial">
-                                initial
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="matches">
-                                matches
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="nested-rules">
-                                nested-rules
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="prefixes">
-                                prefixes
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="rem">
-                                rem
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="checkbox" checked value="variables">
-                                variables
-                            </label>
-                        </li>
-                    </ul>
-
-                    <ul class="demo-support">
-                        <li>
-                            <strong>Browser support:</strong>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="number" id="support-ie" name="explorer" min="0" value="8">
-                                Internet Explorer
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="number" id="support-ff" name="firefox" min="0" value="30">
-                                Mozilla Firefox
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="number" id="support-gc" name="chrome" min="0" value="35">
-                                Google Chrome
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="number" id="support-sf" name="safari" min="0" value="5">
-                                Apple Safari
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="number" id="support-op" name="opera" min="0" value="22">
-                                Opera
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="number" id="support-an" name="android" min="0" value="4">
-                                Android
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="number" id="support-ios" name="ios" min="0" value="6">
-                                iOS
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-            </form>
 
             <footer class="page-footer">
                 <p>Project maintained by <a href="https://github.com/oscarotero">oscarotero</a> | <a href="https://github.com/stylecow/stylecow/blob/master/LICENSE">MIT license</a></p>
             </footer>
         </main>
-
-        <script type="text/javascript" src="js/all.min.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('body').scrollspy({target: '.page-navigation'});
-
-                //Stylecow code
-                var stylecow = require('./js/main');
-
-                var $input = $('#input-code');
-                var $output = $('#output-code');
-                var $plugins = $('.demo-plugins input');
-                var $support = $('.demo-support input');
-
-                $('.demo').submit(function (e) {
-                    e.preventDefault();
-
-                    var plugins = [];
-                    var support = {};
-
-                    $plugins.each(function () {
-                        var $input = $(this);
-
-                        if ($input.is(':checked')) {
-                            plugins.push($input.val());
-                        }
-                    });
-
-                    $support.each(function () {
-                        var $input = $(this);
-
-                        support[$input.attr('name')] = $input.val();
-                    });
-
-                    $output.val(stylecow($input.val(), plugins, support));
-                });
-
-                $('.code-loader').click(function (e) {
-                    e.preventDefault();
-
-                    $.ajax({
-                        url: $(this).attr('href'),
-                        dataType: 'text',
-                        success: function (text) {
-                            $input.val(text);
-                        }
-                    });
-                });
-            });
-        </script>        
-
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

@@ -22,8 +22,7 @@
             <nav class="page-navigation">
                 <ul class="nav">
                     <li><a href="index.html#quick-start">Quick start</a></li>
-                    <li><a href="index.html#cli">Cli</a></li>
-                    <li><a href="index.html#grunt">Grunt</a></li>
+                    <li><a href="index.html#grunt">Grunt/Gulp</a></li>
                     <li><a href="index.html#plugins">Plugins</a></li>
                     <li><a class="selected" href="docs.html">Docs</a></li>
                     <li><a href="api.html">API</a></li>
@@ -33,7 +32,7 @@
             <div class="page-content">
                 <h2>CSS parser</h2>
 
-                <p>The stylecow parser converts a string with css code in an object oriented structure. Each object represents a css element (a rule, a declaration, a value, a selector, etc). Let's take, for example, the following code:</p>
+                <p>The stylecow parser converts a string with css code in an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree (AST)</a>. Each css element (a rule, a declaration, a value, a selector, etc) is an object with other parent and children elements. Let's take, for example, the following code:</p>
 
 <pre><code>html, body {
     font-family: Arial, Helvetica;
@@ -41,50 +40,50 @@
     margin: 10px 20px;
 }
 </code></pre>
-                <p>The object oriented representation is something like:</p>
-<pre><code>[Object Root] [
-  [Object Rule] [
-     [Object Selector] [
-        [Object Keyword name="html"]
-     ],
-     [Object Selector] [
-        [Object Keyword name="body"]
-     ],
-     [Object Declaration name="font-family"] [
-        [Object Value] [
-           [Object Keyword name="Arial"]
-        ],
-        [Object Value] [
-           [Object Keyword name="Helvetica"]
-        ]
-     ]
-     [Object Declaration name="color"] [
-        [Object Value] [
-           [Object Keyword name="black"]
-        ]
-     ],
-     [Object Declaration name="margin"] [
-        [Object Value] [
-           [Object Keyword name="10px"],
-           [Object Keyword name="20px"]
-        ]
-     ]
-  ]
-]
+                <p>The AST representation is something like:</p>
+<pre><code>[Root]
+  [Rule]
+     [Selectors]
+        [Selector]
+            [Element]
+                [Keyword name="html"]
+
+        [Selector]
+            [Element]
+                [Keyword name="body"]
+
+     [Block]
+        [Declaration name="font-family"]
+            [Value]
+                [Keyword name="Arial"]
+            [Value]
+                [Keyword name="Helvetica"]
+
+        [Declaration name="color"]
+            [Value]
+                [Keyword name="black"]
+
+        [Declaration name="margin"]
+            [Value]
+                [Keyword name="10px"]
+                [Keyword name="20px"]
 </code></pre>
                 <p>Because all objects extend the Array.prototype you can iterate with the objects in the following way:</p>
 
 <pre><code>var stylecow = require('stylecow');
-var code = stylecow.parseFile('styles.css');
 
-console.log(code);             //[Object Root]
-console.log(code[0]);          //[Object Rule]
-console.log(code[0][0]);       //[Object Selector]
-console.log(code[0][1]);       //[Object Selector]
-console.log(code[0][2]);       //[Object Declaration name="font-family"]
-console.log(code[0][2][0]);    //[Object Value]
-console.log(code[0][2][0][0]); //[Object Keyword name="Arial"]
+var code = stylecow.Root.create(stylecow.Reader.readFile(input));
 
+console.log(code.type);                // Root
+console.log(code[0].type);             // Rule
+console.log(code[0][0].type);          // Selectors
+console.log(code[0][0][0].type);       // Selector
+console.log(code[0][1].type);          // Block
+console.log(code[0][1][0].type);       // Declaration
+console.log(code[0][1][0].name);       // font-family
+console.log(code[0][1][0][0].type);    // Value
+console.log(code[0][1][0][0][0].type); // Keyword
+console.log(code[0][1][0][0][0].name); // Arial
 
 // you can use all Array.prototype methods
 // to iterate with the code (forEach, some, every, filter, etc)
@@ -92,11 +91,6 @@ console.log(code[0][2][0][0]); //[Object Keyword name="Arial"]
 //Iterate through all childrens of the root
 code.forEach(function (child) {
     console.log(child.type);
-});
-
-//Check if the first rule has any selector
-var hasSelector = code[0].some(function (child) {
-    return child.type === 'Selector';
 });
 </code></pre>
                 
@@ -114,7 +108,7 @@ html, body {
 */
 
 //Stringify just some part of the code:
-var declaration = code[0][2];
+var declaration = code[0][1][0];
 
 console.log(declaration.toString());
 // font-family: Arial, Helvetica;
@@ -125,23 +119,29 @@ console.log('Declaration -> ' + declaration);
 // Declaration -> font-family: Arial, Helvetica;
 </code></pre>
 
-                <p>There are several types of objects available, some with extra properties, such "name" or "value". In the future, the number of objects can increase for more specify, but for now, the available types are:</p>
+                <p>There are several types of objects available. In the future, the number of objects can increase for more specify, but for now, the available types are:</p>
 
                 <table>
                     <tr>
-                        <th>Argument</th>
-                        <td>
-                            <p>To store a function argument. For example the function <code>rgb(12, 34, 56)</code> has three arguments</p>
-                        </td>
-                    </tr>
-                    <tr>
                         <th>AtRule</th>
                         <td>
-                            <p>Stores an at-rule. For example <code>@import</code>, <code>@charset</code></p>
+                            <p>Stores an at-rule. For example <code>@import</code>, <code>@media</code>, etc</p>
 
                             <ul>
                                 <li><strong>name:</strong> Returns the rule name (omiting "@").</li>
                             </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Block</th>
+                        <td>
+                            <p>Used to store the content of a rule or at-rule</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Combinator</th>
+                        <td>
+                            <p>The combinator of a selector (+, ~, &gt;, etc)</p>
                         </td>
                     </tr>
                     <tr>
@@ -155,24 +155,25 @@ console.log('Declaration -> ' + declaration);
                         </td>
                     </tr>
                     <tr>
-                        <th>Condition</th>
-                        <td>
-                            <p>Contains css conditions (media queries, support conditions, etc).</p>
-
-                            <ul>
-                                <li><strong>name:</strong> Returns the condition content.</li>
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr>
                         <th>Declaration</th>
                         <td>
                             <p>To store a css declaration.</p>
 
                             <ul>
                                 <li><strong>name:</strong> Returns the declaration name.</li>
-                                <li><strong>value:</strong> Returns the declaration value as a string</li>
                             </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Element</th>
+                        <td>
+                            <p>To store a selector element (for example "body" or "a:hover").</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Expression</th>
+                        <td>
+                            <p>To store any expression stored between parenthesis (for example: a media query).</p>
                         </td>
                     </tr>
                     <tr>
@@ -182,7 +183,6 @@ console.log('Declaration -> ' + declaration);
 
                             <ul>
                                 <li><strong>name:</strong> Returns the function name.</li>
-                                <li><strong>value:</strong> Returns the function arguments as a string</li>
                             </ul>
                         </td>
                     </tr>
@@ -197,13 +197,15 @@ console.log('Declaration -> ' + declaration);
                         </td>
                     </tr>
                     <tr>
-                        <th>NestedAtRule</th>
+                        <th>MediaQueries</th>
                         <td>
-                            <p>Represents an at-rule that content nested rules (for example <code>@media</code>, <code>@font-face</code>, etc).</p>
-
-                            <ul>
-                                <li><strong>name:</strong> Returns the nested-rule name (omiting the "@").</li>
-                            </ul>
+                            <p>Used to store a group of media queries.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>MediaQuery</th>
+                        <td>
+                            <p>Used to store an individual media query.</p>
                         </td>
                     </tr>
                     <tr>
@@ -225,46 +227,26 @@ console.log('Declaration -> ' + declaration);
                         </td>
                     </tr>
                     <tr>
+                        <th>Selectors</th>
+                        <td>
+                            <p>Represents a collection of css selectors.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>String</th>
+                        <td>
+                            <p>Represents a string.</p>
+                        </td>
+                    </tr>
+                    <tr>
                         <th>Value</th>
                         <td>
-                            <p>Represents a value of a declaration.</p>
+                            <p>Represents a value of a declaration or an argument of a function.</p>
                         </td>
                     </tr>
                 </table>
 
-                <h2>Create your custom tasks</h2>
-
-                <p>In addition to the plugins, you can create your own custom tasks to convert the css code as you want. A task is a function executed for each css element found in the code (a rule, a declaration, etc). Let's see an example:</p>
-
-<pre><code>.foo {
-    colour: red;
-}
-</code></pre>
-
-<pre><code>
-var stylecow = require('stylecow');
-
-stylecow.addTask({
-    Declaration: {
-        colour: function (declaration) {
-            declaration.name = "color";
-        }
-    }
-});
-
-//Execute the task
-var code = stylecow.convertFile('styles.css');
-
-console.log(code.toString());
-/*
-.foo {
-    color: red;
-}
-*/
-</code></pre>
-
-                <p>In this task, we defined a function that is executed for each object of type "Declaration" named "colour" and changes the name to "color".</p>
-                <p>To know how to create your own tasks to manipulate the css as you like, <a href="api.html">you can read the documentation</a></p>
+                <p>To know how to work with this AST to manipulate the css as you like, <a href="api.html">you can read the documentation</a></p>
             </div>
         </main>
 
