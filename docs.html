@@ -34,7 +34,7 @@
 
                 <p>The stylecow parser converts a string with css code in an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree (AST)</a>. Each css element (a rule, a declaration, a value, a selector, etc) is an object with other parent and children elements. Let's take, for example, the following code:</p>
 
-<pre><code>html, body {
+<pre><code>html, body.home {
     font-family: Arial, Helvetica;
     color: black;
     margin: 10px 20px;
@@ -45,12 +45,11 @@
   [Rule]
      [Selectors]
         [Selector]
-            [Element]
-                [Keyword name="html"]
+            [Keyword name="html"]
 
         [Selector]
-            [Element]
-                [Keyword name="body"]
+            [Keyword name="body"]
+            [Keyword name=".home"]
 
      [Block]
         [Declaration name="font-family"]
@@ -165,12 +164,6 @@ console.log('Declaration -> ' + declaration);
                         </td>
                     </tr>
                     <tr>
-                        <th>Element</th>
-                        <td>
-                            <p>To store a selector element (for example "body" or "a:hover").</p>
-                        </td>
-                    </tr>
-                    <tr>
                         <th>Expression</th>
                         <td>
                             <p>To store any expression stored between parenthesis (for example: a media query).</p>
@@ -189,7 +182,7 @@ console.log('Declaration -> ' + declaration);
                     <tr>
                         <th>Keyword</th>
                         <td>
-                            <p>Used to store arbitrary values.</p>
+                            <p>Used to store non quoted values.</p>
 
                             <ul>
                                 <li><strong>name:</strong> Returns the keyword content.</li>
