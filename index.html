@@ -44,7 +44,7 @@
 
                 <pre><code>npm install stylecow -g</code></pre>
 
-                <p>Now you have the <code>stylecow</code> command with some useful utilities. The next step is create a json file with the configuration of the css conversion. You can create it in an interactive way using the command:</p>
+                <p>Now you have the <code>stylecow</code> command with some useful utilities. Run <code>stylecow -h</code> to display the help for usage. The next step is create a json file with the configuration of the css conversion. You can create it in an interactive way using the command:</p>
 
                 <pre><code>npm stylecow init</code></pre>
 
@@ -62,9 +62,13 @@
                 <p>A typical config file looks like:</p>
 
                 <pre><code>{
-    "input": "styles.css",
-    "output": "styles.min.css",
-    "map": "styles.min.map",
+    "files": [
+        {
+            "input": "styles.css",
+            "output": "styles.min.css",
+            "map": "styles.min.map"
+        }
+    ],
     "support": {
         "explorer": 8,
         "firefox": 30,
@@ -82,17 +86,14 @@
     "code": "minify"
 }
 </code></pre>
-                <p>By default the configuration file is saved as <code>stylecow.json</code> but you can choose a different name. To execute it:</p>
+                <p>By default the configuration file is saved as <code>stylecow.json</code> but you can choose a different name. Now, to convert your css just execute:</p>
 
-                <pre><code>stylecow execute stylecow.json</code></pre>
+                <pre><code>stylecow</code></pre>
 
-                <p>You can use simply <code>stylecow execute</code> if your config file is "stylecow.json" (the default name). This command has the following options:</p>
+                <p>You can use the following options:</p>
 
                 <ul>
-                    <li><code>-i, --input &lt;file&gt;</code> To use other input file instead the defined in the config file</li>
-                    <li><code>-o, --output &lt;file&gt;</code> To use other output file instead the defined in the config file</li>
-                    <li><code>-c, --code &lt;name&gt;</code> To use other code style instead the defined in the config file</li>
-                    <li><code>-m, --map &lt;dest&gt;</code> Generate the source map. It can be "false" (no source map), "embed" (in the output file) or a filename to save in an external file.</li>
+                    <li><code>-c, --config &lt;file&gt;</code> Change the default config file (./stylecow.json)</li>
                     <li><code>-w, --watch</code> To watch the changes in the input file and generate the output automatically</li>
                     <li><code>-r, --live-reload</code> Live reload the css in the browser when the output changes (using a websocket)</li>
                 </ul>
