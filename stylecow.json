@@ -1,6 +1,10 @@
 {
-	"input": "css/styles.css",
-	"output": "css/styles.min.css",
+	"files": [
+		{
+			"input": "css/styles.css",
+			"output": "css/styles.min.css"
+		}
+	],
 	"support": {
 		"explorer": 10,
 		"firefox": 30,
@@ -15,8 +19,6 @@
 		"fixes",
 		"flex",
 		"import",
-		"initial",
-		"linear-gradient",
 		"matches",
 		"nested-rules",
 		"prefixes",

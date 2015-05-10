@@ -45,11 +45,11 @@
   [Rule]
      [Selectors]
         [Selector]
-            [Keyword name="html"]
+            [TypeSelector name="html"]
 
         [Selector]
-            [Keyword name="body"]
-            [Keyword name=".home"]
+            [TypeSelector name="body"]
+            [ClassSelector name=".home"]
 
      [Block]
         [Declaration name="font-family"]
@@ -64,10 +64,13 @@
 
         [Declaration name="margin"]
             [Value]
-                [Keyword name="10px"]
-                [Keyword name="20px"]
+                [Unit name="px"]
+                    [Number name="10"]
+
+                [Unit name="px"]
+                    [Number name="20"]
 </code></pre>
-                <p>Because all objects extend the Array.prototype you can iterate with the objects in the following way:</p>
+                <p>Due all objects extend the Array.prototype you can iterate with the objects in the following way:</p>
 
 <pre><code>var stylecow = require('stylecow');
 
@@ -107,7 +110,7 @@ html, body {
 */
 
 //Stringify just some part of the code:
-var declaration = code[0][1][0];
+var declaration = code.get('Declaration');
 
 console.log(declaration.toString());
 // font-family: Arial, Helvetica;
@@ -122,13 +125,21 @@ console.log('Declaration -> ' + declaration);
 
                 <table>
                     <tr>
+                        <th>AttributeSelector</th>
+                        <td>
+                            <p>Stores an attribute selector, for example <code>[href$="http://"]</code>.</p>
+                        </td>
+                    </tr>
+                    <tr>
                         <th>AtRule</th>
                         <td>
-                            <p>Stores an at-rule. For example <code>@import</code>, <code>@media</code>, etc</p>
-
-                            <ul>
-                                <li><strong>name:</strong> Returns the rule name (omiting "@").</li>
-                            </ul>
+                            <p>Stores an at-rule. For example <code>@import</code>, <code>@media</code>, etc. The property <code>name</code> returns the rule name (omiting "@").</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Bang</th>
+                        <td>
+                            <p>Stores a "bang" keyword, for example <code>!important</code>. Use the property <code>name</code> to get its name.</p>
                         </td>
                     </tr>
                     <tr>
@@ -138,67 +149,123 @@ console.log('Declaration -> ' + declaration);
                         </td>
                     </tr>
                     <tr>
+                        <th>ClassSelector</th>
+                        <td>
+                            <p>Stores a class selector, for example <code>.active</code>. Use the property <code>name</code> to get the class name (without dot).</p>
+                        </td>
+                    </tr>
+                    <tr>
                         <th>Combinator</th>
                         <td>
-                            <p>The combinator of a selector (+, ~, &gt;, etc)</p>
+                            <p>The combinator of a selector, for example <code>+</code>, <code>~</code>, <code>&gt;</code>, etc. Use the property <code>name</code> to get the combinator name.</p>
                         </td>
                     </tr>
                     <tr>
                         <th>Comment</th>
                         <td>
-                            <p>Contains a css comment.</p>
-
-                            <ul>
-                                <li><strong>name:</strong> Returns the comment text.</li>
-                            </ul>
+                            <p>Contains a css comment. The property <code>name</code> returns the content.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>ConditionalExpression</th>
+                        <td>
+                            <p>Contains an expression of a conditional selector or media-query. For example <code>(min-width: 30px)</code></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>ConditionalFeature</th>
+                        <td>
+                            <p>Contains the feature of a conditional selector or media-query. For example <code>min-width: 30px</code></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>ConditionalSelector</th>
+                        <td>
+                            <p>Contains a selector for a conditional at-rule, for example <code>@supports</code></p>
                         </td>
                     </tr>
                     <tr>
                         <th>Declaration</th>
                         <td>
-                            <p>To store a css declaration.</p>
-
-                            <ul>
-                                <li><strong>name:</strong> Returns the declaration name.</li>
-                            </ul>
+                            <p>To store a css declaration. The property <code>name</code> returns its name.</p>
                         </td>
                     </tr>
                     <tr>
                         <th>Expression</th>
                         <td>
-                            <p>To store any expression stored between parenthesis (for example: a media query).</p>
+                            <p>To store any math expression stored between parenthesis, for example <code>(3 + 5)</code>. It's used in <code>calc()</code> function.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>ExtensionName</th>
+                        <td>
+                            <p>Stores a extension name, used for variables, custom media, etc. For example <code>--main-color</code>. Use the property <code>name</code> to get its name (without dashes).</p>
                         </td>
                     </tr>
                     <tr>
                         <th>Function</th>
                         <td>
-                            <p>Contains a css function.</p>
-
-                            <ul>
-                                <li><strong>name:</strong> Returns the function name.</li>
-                            </ul>
+                            <p>Contains a css function. The property <code>name</code> returns its name.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Hex</th>
+                        <td>
+                            <p>Stores a hex value, for example <code>#CCC</code>. Use the property <code>name</code> to get the name (without #).</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>IdSelector</th>
+                        <td>
+                            <p>Stores an id selector, for example <code>#menu</code>. Use the property <code>name</code> to get the id name (without #).</p>
                         </td>
                     </tr>
                     <tr>
                         <th>Keyword</th>
                         <td>
-                            <p>Used to store non quoted values.</p>
-
-                            <ul>
-                                <li><strong>name:</strong> Returns the keyword content.</li>
-                            </ul>
+                            <p>Used to store non quoted values. The property <code>name</code> returns its name.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>MatchCombinator</th>
+                        <td>
+                            <p>Stores the match combinator of an attribute selector, for example it is the <code>$=</code> of <code>[href$="http://"]</code>. Use the property <code>name</code> to get its name.</p>
                         </td>
                     </tr>
                     <tr>
                         <th>MediaQueries</th>
                         <td>
-                            <p>Used to store a group of media queries.</p>
+                            <p>Used to store a media query list.</p>
                         </td>
                     </tr>
                     <tr>
                         <th>MediaQuery</th>
                         <td>
                             <p>Used to store an individual media query.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Number</th>
+                        <td>
+                            <p>Stores a number. Use the property <code>name</code> to get the number.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Operator</th>
+                        <td>
+                            <p>Stores an math operator, for example <code>+</code>, <code>/</code>, etc. Use the property <code>name</code> to get its name.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>PseudoClass</th>
+                        <td>
+                            <p>Stores a pseudoclass selector, for example <code>:hover</code> or <code>:nth-child(odd)</code>. Use the property <code>name</code> to get the its name (without colon).</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>PseudoElement</th>
+                        <td>
+                            <p>Stores a pseudoelement selector, for example <code>::before</code>. Use the property <code>name</code> to get the its name (without double colon).</p>
                         </td>
                     </tr>
                     <tr>
@@ -222,13 +289,31 @@ console.log('Declaration -> ' + declaration);
                     <tr>
                         <th>Selectors</th>
                         <td>
-                            <p>Represents a collection of css selectors.</p>
+                            <p>Represents a selector list.</p>
                         </td>
                     </tr>
                     <tr>
                         <th>String</th>
                         <td>
                             <p>Represents a string.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>TypeSelector</th>
+                        <td>
+                            <p>Stores a type selector, for example <code>body</code>. Use the property <code>name</code> to get its name.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>UniversalSelector</th>
+                        <td>
+                            <p>Stores a universal selector (<code>*</code>).</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Unit</th>
+                        <td>
+                            <p>Stores a css unit, for example <code>px</code>, <code>em</code>, <code>%</code>, etc. Use the property <code>name</code> to get its name.</p>
                         </td>
                     </tr>
                     <tr>
@@ -239,7 +324,7 @@ console.log('Declaration -> ' + declaration);
                     </tr>
                 </table>
 
-                <p>To know how to work with this AST to manipulate the css as you like, <a href="api.html">you can read the documentation</a></p>
+                <p>To know how to work with this AST to manipulate the css as you like, <a href="api.html">you can read the API documentation</a></p>
             </div>
         </main>
 

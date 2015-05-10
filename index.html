@@ -32,11 +32,38 @@
             </nav>
 
             <div class="page-content">
-                <h2>Why another CSS preprocessor?</h2>
+                <h2>Why another CSS processor?</h2>
 
                 <p>The main purpose of stylecow is support modern CSS in all browsers. Stylecow transform your code to be compatible with all browsers adding vendor prefixes, fixing issues, generating polyfills, etc.</p>
 
-                <p>You can play also with latests (or futures) css features such variables, nested rules or color manipulation using the w3c syntax. This mean you don't have to learn another language such LESS or SASS to use variables or color manipulation, you write css and you get css, and if you stop using stylecow, your css code remains css code.</p>
+                <p>You can use latests (or futures) css features such variables, custom media, color manipulation, etc using the w3c syntax. So, you don't have to learn a different syntax as with preprocessors such LESS or SASS to use these features. Stylecow is a <strong>postprocessor</strong>, it means it works with pure css. You write css and you get css, and if you stop using stylecow, your css code remains css code.</p>
+
+                <h3>Why stylecow is special?</h3>
+
+                <p>There are other postprocessors, the most popular is the awesome <a href="https://github.com/postcss/postcss">postcss</a> with a lot of plugins. But it has some issues that I don't like and stylecow try to solve:</p>
+
+                <h4>Order matters</h4>
+
+                <p>In postcss, the order of the plugins you are using is important, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables.</p>
+
+                <h4>Writting plugins is hard</h4>
+
+                <p>Postcss is very, very fast (maybe the fastest). But it is because its AST doesn't go so far, and it's not easy to work with little things like numbers, units, etc.</p>
+
+                <p>Let's take, for example the <a href="https://github.com/iamvdo/postcss-vmin">postcss-vmin</a> plugin. <a href="https://github.com/iamvdo/postcss-vmin/blob/master/index.js">To search all vmin units in the css code</a> it need regular expressions, <code>.indexOf()</code>, etc. <a href="https://github.com/stylecow/stylecow-plugin-fixes/blob/master/src/vmin.js">The stylecow version of this plugin</a> is cleaner. It allows work with css in a more safe and faster way.</p>
+
+                <h4>No centralized browser support</h4>
+
+                <p>The plugin of the previous example only makes sense if we want to add support for explorer 9. In postcss, you have to decide which plugins you have to use, according with the browser support you need (with the  exception of some plugins like autoprefixer). In stylecow, the plugins can have the browser support, so, if you use the vmin plugin but your minimum suport is explorer 10, this plugin wont be executed.
+                </p>
+
+                <h4>Too many plugins, too many verbose</h4>
+
+                <p>To use the same features than stylecow in postcss, you need to install and configure a dozen of plugins or more. Stylecow is only one package, all available plugins are installed with it and it's ready to use in seconds.</p>
+
+                <h4>Note</h4>
+
+                <p>I don't have anything against postcss, I take it because it's the most popular library. It's a great option, better than stylecow in many ways. I only want to expose some parts that I think stylecow is better.</p>
 
                 <h2 id="quick-start">Quick start</h2>
 
@@ -44,17 +71,17 @@
 
                 <pre><code>npm install stylecow -g</code></pre>
 
-                <p>Now you have the <code>stylecow</code> command with some useful utilities. Run <code>stylecow -h</code> to display the help for usage. The next step is create a json file with the configuration of the css conversion. You can create it in an interactive way using the command:</p>
+                <p>Now you have the <code>stylecow</code> command with some useful utilities. Run <code>stylecow -h</code> to display the help for usage. The next step is create a file with the configuration. You can create it in an interactive way using the command:</p>
 
-                <pre><code>npm stylecow init</code></pre>
+                <pre><code>stylecow init</code></pre>
 
                 <p>In this process, you have to define the following settings:</p>
 
                 <ul>
                     <li><strong>support:</strong> Minimum version supported by the browsers explorer, firefox, chrome, safari, opera, android and ios</li>
                     <li><strong>plugins:</strong> The plugins you want to use in the conversion (see below)</li>
-                    <li><strong>code:</strong> Style used to ouput the css code. For example: normal and minify</li>
-                    <li><strong>input:</strong> path of the css file to convert</li>
+                    <li><strong>code:</strong> Code style used to ouput the css. (Normal and minify)</li>
+                    <li><strong>input:</strong> path of the main css file to convert</li>
                     <li><strong>output:</strong> path of the file where save the result</li>
                     <li><strong>map:</strong> whether or not generate the source map</li>
                 </ul>
@@ -165,10 +192,26 @@ gulp.task('stylecow', function() {
                     </tr>
                     <tr>
                         <td>
-                            <a href="https://github.com/stylecow/stylecow-plugin-nested-rules">nested-rules:</a>
+                            <a href="https://github.com/stylecow/stylecow-plugin-calc">calc:</a>
                         </td>
                         <td>
-                            allows nested rules
+                            add support for <code>calc()</code> function (only if no more than one unit is used)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="https://github.com/stylecow/stylecow-plugin-custom-media">custom-media:</a>
+                        </td>
+                        <td>
+                            add support for <code>@custom-media</code> at-rule
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="https://github.com/stylecow/stylecow-plugin-custom-selector">custom-selector:</a>
+                        </td>
+                        <td>
+                            add support for <code>@custom-selector</code> at-rule
                         </td>
                     </tr>
                     <tr>
@@ -177,6 +220,19 @@ gulp.task('stylecow', function() {
                         </td>
                         <td>
                             allows the use of CSS variables
+                        </td>
+                    </tr>
+                </table>
+
+                <h3>Language extensions:</h3>
+
+                <table>
+                    <tr>
+                        <td>
+                            <a href="https://github.com/stylecow/stylecow-plugin-nested-rules">nested-rules:</a>
+                        </td>
+                        <td>
+                            unwraps nested rules
                         </td>
                     </tr>
                 </table>

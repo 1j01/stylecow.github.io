@@ -33,14 +33,14 @@
                     <strong>Traversing:</strong>
                     <ul>
                         <li><a href="#api-is">.is()</a></li>
-                        <li><a href="#api-children">.children()</a></li>
-                        <li><a href="#api-firstChild">.firstChild()</a></li>
+                        <li><a href="#api-getchildren">.getChildren()</a></li>
+                        <li><a href="#api-getchild">.getChild()</a></li>
                         <li><a href="#api-haschild">.hasChild()</a></li>
-                        <li><a href="#api-search">.search()</a></li>
-                        <li><a href="#api-searchfirst">.searchFirst()</a></li>
+                        <li><a href="#api-getall">.getAll()</a></li>
+                        <li><a href="#api-get">.get()</a></li>
                         <li><a href="#api-has">.has()</a></li>
                         <li><a href="#api-next">.next() | .prev()</a></li>
-                        <li><a href="#api-parent">.parent()</a></li>
+                        <li><a href="#api-getparent">.getParent()</a></li>
                     </ul>
                 </nav>
 
@@ -64,9 +64,12 @@
                     <strong>Miscelaneous:</strong>
                     <ul>
                         <li><a href="#api-toarray">.toArray()</a></li>
-                        <li><a href="#api-getdata">.setData() | .getData()</a></li>
+                        <li><a href="#api-toast">.toAst()</a></li>
+                        <li><a href="#api-getdata">.setData() | .getData() | .getAllData()</a></li>
                         <li><a href="#api-index">.index()</a></li>
-                        <li><a href="#api-set">.set()</a></li>
+                        <li><a href="#api-setname">.setName()</a></li>
+                        <li><a href="#api-setvendor">.setVendor()</a></li>
+                        <li><a href="#api-setnamewithvendor">.setNameWithVendor()</a></li>
                     </ul>
                 </nav>
             </div>
@@ -94,7 +97,7 @@
 </code></pre>
 
 <pre><code>//Get the first declaration:
-var declaration = code.searchFirst('Declaration');
+var declaration = code.get('Declaration');
 
 //Use an object to check conditions:
 console.log(declaration.is({
@@ -132,9 +135,9 @@ console.log(declaration.is({
 // true
 </code></pre>
 
-                <h3 id="api-children">.children()</h3>
+                <h3 id="api-getchildren">.getChildren()</h3>
 
-                <p>Returns a collection with the direct children of an object. You can provide a filter to return only the children matching with some conditions.</p>
+                <p>Returns an array with the direct children of an object. You can provide a filter to return only the children matching with some conditions.</p>
 
 <pre><code>body {
     color: blue;
@@ -152,12 +155,12 @@ console.log(declaration.is({
 </code></pre>
 
 <pre><code>//Get all children:
-var result = code.children();
+var result = code.getChildren();
 
 console.log(result.length); //3
 
 //Get only the objects of type "AtRule"
-var result = code.children('AtRule');
+var result = code.getChildren('AtRule');
 
 console.log(result.length); //2
 
@@ -170,9 +173,9 @@ var result = code.children({
 console.log(result.length); //1
 </code></pre>
 
-                <h3 id="api-firstChild">.firstChild()</h3>
+                <h3 id="api-getchild">.getChild()</h3>
 
-                <p>It's like <code>.children()</code> but returns the first result found instead an a collection with all elements, and of course, you can provide a filter.</p>
+                <p>It's like <code>.getChildren()</code> but returns the first result found instead an array with all elements, and of course, you can provide a filter.</p>
 
                 <h3 id="api-haschild">.hasChild()</h3>
 
@@ -193,9 +196,9 @@ ruleBlock.hasChild({type: 'Declaration', name: 'border-radius'}); //true
 ruleBlock.hasChild({type: 'Declaration', name: 'color'}); //false
 </code></pre>
 
-                <h3 id="api-search">.search()</h3>
+                <h3 id="api-getAll">.getAll()</h3>
 
-                <p>It's like <code>.children()</code> but search recursively in cascade and returns a collection with all results found.</p>
+                <p>It's like <code>.getChildren()</code> but search recursively in cascade and returns an array with all results found.</p>
 
 <pre><code>body {
     color: blue;
@@ -207,7 +210,7 @@ p {
 </code></pre>
 
 <pre><code>//Search all keywords named "blue" and change to "green":
-code.search({
+code.getAll({
     type: 'Keyword',
     name: 'blue'
 }).forEach(function (keyword) {
@@ -227,9 +230,9 @@ p {
 */
 </code></pre>
 
-                <h3 id="api-searchfirst">.searchFirst()</h3>
+                <h3 id="api-get">.get()</h3>
 
-                <p>It's like <code>.search()</code> but returns the first element found.</p>
+                <p>It's like <code>.getAll()</code> but returns the first element found.</p>
 
                 <h3 id="api-has">.has()</h3>
 
@@ -247,7 +250,7 @@ p {
 </code></pre>
 
 <pre><code>//Search the font-family declaration:
-var declaration = code.searchFirst({
+var declaration = code.get({
     type: 'Declaration',
     name: 'font-family'
 });
@@ -263,7 +266,7 @@ var prev = declaration.prev();
 console.log(prev.toString()); // "color: blue"
 </code></pre>
 
-                <h3 id="api-parent">.parent()</h3>
+                <h3 id="api-getparent">.getParent()</h3>
 
                 <p>Returns the parent element. This function accepts a filter to return the first parent matching. For example:</p>
 
@@ -273,16 +276,16 @@ console.log(prev.toString()); // "color: blue"
 </code></pre>
 
 <pre><code>//Search the "red" keyword:
-var red = code.searchFirst({
+var red = code.get({
     type: 'Keyword',
     name: 'red'
 });
 
 //Get the inmediate parent:
-console.log(red.parent().type); // Value
+console.log(red.getParent().type); // Value
 
 //Get the declaration parent:
-console.log(red.parent('Declaration').type); // Declaration
+console.log(red.getParent('Declaration').type); // Declaration
 </code></pre>
 
                 <h3 id="api-clone">.clone()</h3>
@@ -295,7 +298,7 @@ console.log(red.parent('Declaration').type); // Declaration
 </code></pre>
 
 <pre><code>//Get the border-radius declaration:
-var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
+var declaration = code.get({type: 'Declaration', name: 'border-radius'});
 
 //Clone the declaration
 var cloned = declaration.clone();
@@ -315,7 +318,7 @@ console.log(cloned.toString()); // -moz-border-radius: 1px;
 </code></pre>
 
 <pre><code>//Get the border-radius declaration:
-var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
+var declaration = code.get({type: 'Declaration', name: 'border-radius'});
 
 //Clone the declaration, insert before and change the name:
 declaration.cloneBefore().name = '-moz-border-radius';
@@ -377,7 +380,7 @@ console.log(declaration.toString()); // font-family: Helvetica, Arial, sans-seri
 </code></pre>
 
 <pre><code>//Get the border-radius declaration:
-var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
+var declaration = code.get({type: 'Declaration', name: 'border-radius'});
 
 //Insert a new element before:
 declaration.before(stylecow.Declaration.createFromString('color: blue'));
@@ -414,7 +417,7 @@ body {
 </code></pre>
 
 <pre><code>//Get the color declaration:
-var declaration = code.searchFirst({type: 'Declaration', name: 'color'});
+var declaration = code.get({type: 'Declaration', name: 'color'});
 
 //Replace the declaration by other:
 declaration.replaceWith(stylecow.Declaration.createFromString('background: red'));
@@ -439,7 +442,7 @@ body {
 </code></pre>
 
 <pre><code>//Get the color declaration:
-var declaration = code.searchFirst({type: 'Declaration', name: 'color'});
+var declaration = code.get({type: 'Declaration', name: 'color'});
 
 //Remove it
 declaration.remove();
@@ -467,7 +470,7 @@ body {
 </code></pre>
 
 <pre><code>//Empty the rule
-code.searchFirst({type: 'Rule'}).empty();
+code.get({type: 'Rule'}).empty();
 
 console.log(code.toString());
 /*
@@ -486,7 +489,7 @@ body {
 </code></pre>
 
 <pre><code>//Get the rgba function:
-var rgba = code.searchFirst({type: 'Function', name: 'rgba'});
+var rgba = code.get({type: 'Function', name: 'rgba'});
 
 console.log(rgba.toArray());
 /*
@@ -494,10 +497,16 @@ console.log(rgba.toArray());
 */
 </code></pre>
 
-                <h3 id="api-setvalue">.setData() | .getData()</h3>
+                <h3 id="api-toarray">.toAst()</h3>
+
+                <p>Returns the ast representation of the css code. Useful for debug purposes</p>
+
+
+                <h3 id="api-getdata">.setData() | .getData() | .getAllData()</h3>
 
                 <p>Saves arbitrary data in the element. This data can be recovered in the cascade tree for any of its children.</p>
-                <p>The function <code>.getData()</code> returns any value saved. If the element has not the value, it search the value in its parents.</p>
+                <p>The function <code>.getData()</code> returns the first value found in its parents. The function <code>.getAllData()</code> returns all values found.</p>
+                <p>This is used by the parser to save the source of each element (original filename, line and column number). It's used also by some plugins to save variables.</p>
 
 <pre><code class="css">body {
     color: blue;
@@ -515,10 +524,14 @@ console.log(rgba.toArray());
 <pre><code>//Save a value in the root
 code.setData('bar', 'foo');
 
-//Select the font-weight declaration:
-var font_weight = code.searchFirst({type: 'Declaration', name: 'font-weight'});
+//Save other value in the first declaration
+code.get('Declaration').setData('bar', 'foo2');
 
-console.log(font_weight.getData('bar')); //foo
+//Select the font-weight declaration:
+var font_weight = code.get({type: 'Declaration', name: 'font-weight'});
+
+console.log(font_weight.getData('bar')); //foo2
+console.log(font_weight.getAllData('bar')); //[foo, foo2]
 </code></pre>
 
                 <h3 id="api-index">.index()</h3>
@@ -531,31 +544,84 @@ console.log(font_weight.getData('bar')); //foo
 }
 </code></pre>
 
-<pre><code>console.log(code.searchFirst({type: 'Declaration', name: 'color'}).index());
+<pre><code>console.log(code.get({type: 'Declaration', name: 'color'}).index());
 // 0
 
-console.log(code.searchFirst({type: 'Declaration', name: 'background'}).index());
+console.log(code.get({type: 'Declaration', name: 'background'}).index());
 // 1
 </code></pre>
-                <h3 id="api-set">.set()</h3>
+                <h3 id="api-setname">.setName()</h3>
 
-                <p>Set properties to the element. Useful to modifications in a chain:</p>
+                <p>Change the name of the element. Not all elements have a name</p>
 
 <pre><code>body {
     border-radius: 1px;
 }
 </code></pre>
 
-<pre><code>//Get the border-radius declaration:
-var declaration = code.searchFirst({type: 'Declaration', name: 'border-radius'});
-
-//Clone before and modify the name
-declaration.cloneBefore().set('name', '-moz-border-radius');
+<pre><code>//Change the name of the "body" type selector
+code
+    .get({
+        type: 'TypeSelector',
+        name: 'body'
+    })
+    .setName('div');
 
 console.log(code.toString());
 /*
-body {
-    -moz-border-radius: 1px;
+div {
+    border-radius: 1px;
+}
+*/
+</code></pre>
+                <h3 id="api-setvendor">.setVendor()</h3>
+
+                <p>Change the vendor prefix of the element. Not all elements can have a vendor prefix</p>
+
+<pre><code>body {
+    border-radius: 1px;
+}
+</code></pre>
+
+<pre><code>//Add a vendor prefix for -webkit-
+code
+    .get({
+        type: 'Declaration',
+        name: 'border-radius'
+    })
+    .cloneBefore() //clone the declaration
+    .setVendor('webkit');
+
+console.log(code.toString());
+/*
+div {
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+}
+*/
+</code></pre>
+                <h3 id="api-setnamewithvendor">.setNameWithVendor()</h3>
+
+                <p>Change the name and vendor prefix of the element. Available only for some elements</p>
+
+<pre><code>body {
+    border-top-right-radius: 1px;
+}
+</code></pre>
+
+<pre><code>//Add a vendor prefix for -moz-
+code
+    .get({
+        type: 'Declaration',
+        name: 'border-radius'
+    })
+    .cloneBefore() //clone the declaration
+    .setNameWithVendor('-moz-border-radius-topright');
+
+console.log(code.toString());
+/*
+div {
+    -moz-border-radius-topright: 1px;
     border-radius: 1px;
 }
 */
