@@ -49,25 +49,22 @@
 
                 <h4>Order matters</h4>
 
-                <p>In postcss, the order of the plugins you are using is important because they are executed one each time, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables.</p>
+                <p>In postcss, the order of the plugins you are using is important because they are executed one each time, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables. There is the <a href="https://cssnext.github.io/">cssnext library</a> that tries to solve this, and do it pretty well, but if you want combine it with other plugins, we have the same problem.</p>
 
-                <h4>Plugins are slow</h4>
+                <h4>Create plugins are hard</h4>
 
                 <p>Postcss parser is very, very fast (one of the fastest). But this is because its AST doesn't go so far, and it's not easy to work with little things like numbers, units, etc.</p>
 
-                <p>Let's take, for example the <a href="https://github.com/iamvdo/postcss-vmin">postcss-vmin</a> plugin. <a href="https://github.com/iamvdo/postcss-vmin/blob/master/index.js">To search all vmin units in the css code</a> it need regular expressions, <code>.indexOf()</code>, etc. <a href="https://github.com/stylecow/stylecow-plugin-fixes/blob/master/src/vmin.js">The stylecow version of this plugin</a> is cleaner. It allows work with css in a more safe and faster way.</p>
+                <p>Let's take, for example the <a href="https://github.com/iamvdo/postcss-vmin">postcss-vmin</a> plugin. <a href="https://github.com/iamvdo/postcss-vmin/blob/master/index.js">To search all vmin units in the css code</a> it need regular expressions, <code>.indexOf()</code>, etc. <a href="https://github.com/stylecow/stylecow-plugin-fixes/blob/master/src/vmin.js">The stylecow version of this plugin</a> is cleaner. It allows work with css in a safer way, so if you have special needs, you can manipulate the css code easier.</p>
 
-                <p>This means the more plugins you use, the slower postcss will go. For example, <a href="https://github.com/stylecow/stylecow/blob/master/bench/bench.js">in this benchmark using some typical plugins</a> stylecow can execute 180 ops/sec, and postcss only 30.
+                <h4>Better syntax checking</h4>
+
+                <p>Postcss detects some simple css syntax errors, like unclosed rules or functions. But things like <code>a[href=</code> or <code>display: .none</code> are not detected and are considered valid. The css parser of stylecow validates the code in deep, and can detect more syntax errors.</p>
+
+                <h4>Code output</h4>
+
+                <p>Stylecow allows to customize the output code generation. There are two styles by default (normal an minify) but more styles <a href="https://github.com/stylecow/stylecow-parser/blob/master/lib/coder.js#L78">can be created easily</a>
                 </p>
-
-                <h4>No centralized browser support</h4>
-
-                <p>The plugin of the previous example (postcss-vmin) only makes sense if we want to add support for explorer 9. In postcss, you have to decide which plugins you have to use, according with the browser support you need (with the exception of some plugins like autoprefixer). In stylecow, the plugins can have the browser support, so, if you use the vmin plugin but your minimum suport is explorer 10, this plugin wont be executed.
-                </p>
-
-                <h4>Too many plugins, too many verbose</h4>
-
-                <p>To use the same features than stylecow in postcss, you need to install and configure a dozen of plugins or more. Stylecow is only one package, all available plugins are installed with it and it's ready to use in few seconds.</p>
 
                 <h4>Note</h4>
 
