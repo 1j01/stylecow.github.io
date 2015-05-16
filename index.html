@@ -49,7 +49,7 @@
 
                 <h4>Order matters</h4>
 
-                <p>In postcss, the order of the plugins you are using is important because they are executed one each time, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables. <a href="https://cssnext.github.io/">Cssnext</a> is a plugins pack that tries to solve this, and do it pretty well, but if you want combine it with other plugins, we have the same problem.</p>
+                <p>In postcss, the order of the plugins you are using is important because they are executed one each time, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables. <a href="https://cssnext.github.io/">Cssnext</a> tries to solve this (and do it pretty well), but if you want combine it with other plugins, we have the same problem.</p>
 
                 <h4>Create plugins is not easy</h4>
 
