@@ -3,6 +3,9 @@
 		{
 			"input": "css/styles.css",
 			"output": "css/styles.min.css"
+		},{
+			"input": "css/styles-online.css",
+			"output": "css/styles-online.min.css"
 		}
 	],
 	"support": {

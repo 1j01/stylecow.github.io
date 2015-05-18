@@ -1,22 +1,14 @@
 {
   "name": "stylecow",
   "dependencies": {
+    "browserify": "^10.2.0",
+    "codemirror": "^5.2.0",
     "grunt": "*",
     "grunt-browserify": "*",
-    "grunt-contrib-uglify": "*",
     "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "*",
     "grunt-stylecow": "*",
-    "stylecow": "*",
-    "stylecow-plugin-color": "*",
-    "stylecow-plugin-fixes": "*",
-    "stylecow-plugin-flex": "*",
-    "stylecow-plugin-import": "*",
-    "stylecow-plugin-initial": "*",
-    "stylecow-plugin-matches": "*",
-    "stylecow-plugin-nested-rules": "*",
-    "stylecow-plugin-prefixes": "*",
-    "stylecow-plugin-rem": "*",
-    "stylecow-plugin-variables": "*"
+    "stylecow": "*"
   }
 }

@@ -1,0 +1,101 @@
+@import url('//fonts.googleapis.com/css?family=Lora:400');
+@import url(//fonts.googleapis.com/css?family=Open+Sans:300,400,700,800);
+@import url(../node_modules/codemirror/lib/codemirror.css);
+@import url(csans.css);
+
+:root {
+	--black: #282933;
+	--color: #505166;
+	--font-sans: 'Lora', Georgia, serif;
+	--font-sans: 'Open Sans', Helvetica, sans-serif;
+	--gray: #F8F8F8;
+}
+
+body {
+	color: var(--black);
+	font-family: var(--font-sans);
+	position: relative;
+}
+
+header {
+    position: relative;
+    z-index: 2;
+    padding: 0 15px;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+
+    h1 {
+	    margin: 0;
+	    font-size: 1.4rem;
+	    color: white;
+	    font-weight: normal;
+	    flex-grow: 1;
+
+	    strong {
+		    font-weight: normal;
+		    color: var(--color);
+		}
+
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+	}
+
+	button {
+	    border: none;
+	    background: yellowgreen;
+	    border-radius: 3px;
+	    font-family: var(--font-sans);
+	    transition: all 0.3s;
+        font-weight: bold;
+        padding: 0.5em 2em;
+        color: var(--black);
+
+	    &:hover {
+	    	background: color(yellowgreen b(+30%));
+            color: black;
+	    }
+	}
+}
+
+.logo {
+    display: inline-block;
+    vertical-align: middle;
+	path {
+    	fill: #FFFFFF;
+    }
+}
+.input, .output {
+    position: fixed;
+    width: 50%;
+    height: calc(100% - 65px);
+    top: 65px;
+    left: 0;
+    box-sizing: border-box;
+}
+.output {
+    left: 50%;
+}
+
+.CodeMirror {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#error {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    z-index: 2;
+    padding: 10px;
+    color: white;
+    background: color(red a(0.8));
+    max-width: 300px;
+    border-radius: 3px;
+    display: none;
+}
