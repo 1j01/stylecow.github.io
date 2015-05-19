@@ -5,9 +5,7 @@
     "codemirror": "^5.2.0",
     "grunt": "*",
     "grunt-browserify": "*",
-    "grunt-contrib-concat": "*",
     "grunt-contrib-uglify": "*",
-    "grunt-contrib-watch": "*",
     "grunt-stylecow": "*",
     "stylecow": "*"
   }

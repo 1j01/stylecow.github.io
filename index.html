@@ -48,17 +48,17 @@
 
                 <h4>Order matters</h4>
 
-                <p>In postcss, the order of the plugins you are using is important because they are executed one each time, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables. <a href="https://cssnext.github.io/">Cssnext</a> tries to solve this (and do it pretty well), but if you want combine it with other plugins, we have the same problem.</p>
+                <p>In postcss, the order of the plugins you are using is important because they are executed one at a time, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables. <a href="https://cssnext.github.io/">Cssnext</a> tries to solve this (and do it pretty well), but if you want combine it with more plugins, you can have the same problem.</p>
 
                 <h4>Create plugins is not easy</h4>
 
                 <p>Postcss parser is very, very fast (one of the fastest). But this is because its AST doesn't go so far, and it's not easy to work with little things like numbers, units, etc.</p>
 
-                <p>Let's take, for example the <a href="https://github.com/iamvdo/postcss-vmin">postcss-vmin</a> plugin. <a href="https://github.com/iamvdo/postcss-vmin/blob/master/index.js">To search all vmin units in the css code</a> it need regular expressions, <code>.indexOf()</code>, etc. So, for example the declaration <code>content: "2rems"</code> is converted to <code>content: "32pxs"</code>. <a href="https://github.com/stylecow/stylecow-plugin-fixes/blob/master/src/vmin.js">The stylecow version of this plugin</a> is cleaner. It's <a href="https://github.com/stylecow/stylecow-parser/wiki">API</a> allows work with css in a safer way, so if you have special needs, you can manipulate the css code easier.</p>
+                <p>Let's take, for example the <a href="https://github.com/iamvdo/postcss-vmin">postcss-vmin</a> plugin. <a href="https://github.com/iamvdo/postcss-vmin/blob/master/index.js">To search all vmin units in the css code</a> it need regular expressions, <code>.indexOf()</code>, etc. <a href="https://github.com/stylecow/stylecow-plugin-fixes/blob/master/src/vmin.js">The stylecow version of this plugin</a> is cleaner. It's <a href="https://github.com/stylecow/stylecow-parser/wiki">API</a> allows work with css in a safer way, so if you have special needs, you can manipulate the css code easier.</p>
 
                 <h4>Better syntax checking</h4>
 
-                <p>Postcss detects some simple css syntax errors, like unclosed rules or functions. But issues like <code>a[href=</code> or <code>display: .none</code> are not detected and are considered valid. The css parser of stylecow validates the code in deep, and can detect more syntax errors.</p>
+                <p>Postcss detects some simple css syntax errors, like unclosed rules or functions. But issues like <code>a[href=</code> or <code>display: .none</code> are not detected and are considered valid. Stylecow validates the code and can detect more syntax errors.</p>
 
                 <h4>Code output</h4>
 
@@ -67,7 +67,7 @@
 
                 <h4>Note</h4>
 
-                <p>I don't have anything against postcss, I take it as example because it is one of the most popular library with a similar purpose than stylecow. It's a great option, better than stylecow some cases. I only want to expose some parts that I think stylecow is better.</p>
+                <p>I don't have anything against postcss, I take it as example because it is one of the most popular library with a similar purpose than stylecow. It's a great option, better than stylecow some aspects. I only want to expose some parts that I think stylecow is better.</p>
 
                 <h2 id="quick-start">Quick start</h2>
 
