@@ -42,32 +42,38 @@
 
                 <p>You can use latests (or futures) css features such variables, custom media, color manipulation, etc using the w3c syntax. So, you don't have to learn a different syntax as with preprocessors such LESS or SASS to use these features. Stylecow is a <strong>postprocessor</strong>, it means it works with pure css. You write css and you get css, and if you stop using stylecow, your css code remains css code.</p>
 
-                <h3>What about postcss?</h3>
+                <h3>Why stylecow is special?</h3>
 
-                <p><a href="https://github.com/postcss/postcss">Postcss</a> is a popular and awesome css postprocessor, very similar to stylecow but it has some issues that stylecow tries to solve:</p>
+                <p>There are other awesome css processors available that you can use such <a href="https://github.com/postcss/postcss">Postcss</a> or <a href="https://github.com/reworkcss/rework">Rework</a>. Stylecow has some strengths that may interest you:</p>
 
-                <h4>Order matters</h4>
-
-                <p>In postcss, the order of the plugins you are using is important because they are executed one at a time, so if you want combine several plugins, this can be a problem. For example, if you define <code>postcss-css-variables</code> before <code>postcss-import</code>, the first plugin wont be executed in the files imported by the second one. And there are some recursive cases very hard to solve, for example, variables using color functions using variables. <a href="https://cssnext.github.io/">Cssnext</a> tries to solve this (and do it pretty well), but if you want combine it with more plugins, you can have the same problem.</p>
-
-                <h4>Create plugins is not easy</h4>
-
-                <p>Postcss parser is very, very fast (one of the fastest). But this is because its AST doesn't go so far, and it's not easy to work with little things like numbers, units, etc.</p>
-
-                <p>Let's take, for example the <a href="https://github.com/iamvdo/postcss-vmin">postcss-vmin</a> plugin. <a href="https://github.com/iamvdo/postcss-vmin/blob/master/index.js">To search all vmin units in the css code</a> it need regular expressions, <code>.indexOf()</code>, etc. <a href="https://github.com/stylecow/stylecow-plugin-fixes/blob/master/src/vmin.js">The stylecow version of this plugin</a> is cleaner. It's <a href="https://github.com/stylecow/stylecow-parser/wiki">API</a> allows work with css in a safer way, so if you have special needs, you can manipulate the css code easier.</p>
-
-                <h4>Better syntax checking</h4>
-
-                <p>Postcss detects some simple css syntax errors, like unclosed rules or functions. But issues like <code>a[href=</code> or <code>display: .none</code> are not detected and are considered valid. Stylecow validates the code and can detect more syntax errors.</p>
-
-                <h4>Code output</h4>
-
-                <p>Stylecow allows to customize the output code generation. There are two styles by default (normal an minify) but more styles <a href="https://github.com/stylecow/stylecow-parser/blob/master/lib/coder.js#L78">can be created easily</a>
-                </p>
-
-                <h4>Note</h4>
-
-                <p>I don't have anything against postcss, I take it as example because it is one of the most popular library with a similar purpose than stylecow. It's a great option, better than stylecow some aspects. I only want to expose some parts that I think stylecow is better.</p>
+                <ul class="stylecow-properties">
+                    <li>
+                        <strong>Add plugins easily</strong>
+                        <p>
+                            All available plugins are installed with this package and no specific order is required
+                        </p>
+                    </li><li>
+                        <strong>Strong API</strong>
+                        <p>
+                            Stylecow provides a <a href="https://github.com/stylecow/stylecow-parser/wiki">clean and good API</a> to work with css in a safe and easy way. You can create your own plugins in minutes.
+                        </p>
+                    </li><li>
+                        <strong>Very good syntax checking</strong>
+                        <p>
+                            The Stylecow parser can detect any css syntax error and warn you in what line and column ocurred.
+                        </p>
+                    </li><li>
+                        <strong>Customize the style code generation</strong>
+                        <p>
+                            There are two styles by default (normal an minify) but more styles <a href="https://github.com/stylecow/stylecow-parser/blob/master/lib/coder.js#L78">can be created easily</a>
+                        </p>
+                    </li><li>
+                        <strong>Development tools</strong>
+                        <p>
+                            A watcher and a browser live-reload utility are included, so for simple use cases this can be enought.
+                        </p>
+                    </li>
+                </ul>
 
                 <h2 id="quick-start">Quick start</h2>
 

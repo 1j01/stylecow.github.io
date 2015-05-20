@@ -75,8 +75,10 @@ ul.grid {
         content: 'hi "you"';
     }
 }
-div.grid {
-    @extend %grid;
+article.grid {
+    > div {
+        @extend %grid;
+    }
 }
 </textarea>
         </div>
