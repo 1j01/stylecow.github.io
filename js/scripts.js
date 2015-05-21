@@ -14,8 +14,8 @@ require('../node_modules/stylecow/node_modules/stylecow-plugin-extend')(stylecow
 require('../node_modules/stylecow/node_modules/stylecow-plugin-fixes')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-flex')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-matches')(stylecow);
-require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-background-alpha')(stylecow);
-require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-linear-gradient')(stylecow);
+//require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-background-alpha')(stylecow);
+//require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-linear-gradient')(stylecow);
 //'./node_modules/stylecow/node_modules/stylecow-plugin-msfilter-transform',
 require('../node_modules/stylecow/node_modules/stylecow-plugin-nested-rules')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-prefixes')(stylecow);
@@ -23,16 +23,16 @@ require('../node_modules/stylecow/node_modules/stylecow-plugin-rem')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-variables')(stylecow);
 
 stylecow.minSupport({
-	explorer: false,
-	firefox: false,
-	chrome: false,
-	safari: false,
-	opera: false,
-	android: false,
-	ios: false
+	explorer: 8,
+	firefox: 30,
+	chrome: 35,
+	safari: 6,
+	opera: 22,
+	android: 4,
+	ios: 6
 });
 
-},{"../node_modules/codemirror/mode/css/css":9,"../node_modules/stylecow/node_modules/stylecow-plugin-calc":76,"../node_modules/stylecow/node_modules/stylecow-plugin-color":77,"../node_modules/stylecow/node_modules/stylecow-plugin-custom-media":94,"../node_modules/stylecow/node_modules/stylecow-plugin-custom-selector":95,"../node_modules/stylecow/node_modules/stylecow-plugin-extend":96,"../node_modules/stylecow/node_modules/stylecow-plugin-fixes":97,"../node_modules/stylecow/node_modules/stylecow-plugin-flex":107,"../node_modules/stylecow/node_modules/stylecow-plugin-matches":111,"../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-background-alpha":112,"../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-linear-gradient":118,"../node_modules/stylecow/node_modules/stylecow-plugin-nested-rules":124,"../node_modules/stylecow/node_modules/stylecow-plugin-prefixes":125,"../node_modules/stylecow/node_modules/stylecow-plugin-rem":158,"../node_modules/stylecow/node_modules/stylecow-plugin-variables":159,"codemirror":"codemirror","stylecow":"stylecow"}],2:[function(require,module,exports){
+},{"../node_modules/codemirror/mode/css/css":9,"../node_modules/stylecow/node_modules/stylecow-plugin-calc":76,"../node_modules/stylecow/node_modules/stylecow-plugin-color":77,"../node_modules/stylecow/node_modules/stylecow-plugin-custom-media":94,"../node_modules/stylecow/node_modules/stylecow-plugin-custom-selector":95,"../node_modules/stylecow/node_modules/stylecow-plugin-extend":96,"../node_modules/stylecow/node_modules/stylecow-plugin-fixes":97,"../node_modules/stylecow/node_modules/stylecow-plugin-flex":107,"../node_modules/stylecow/node_modules/stylecow-plugin-matches":111,"../node_modules/stylecow/node_modules/stylecow-plugin-nested-rules":112,"../node_modules/stylecow/node_modules/stylecow-plugin-prefixes":113,"../node_modules/stylecow/node_modules/stylecow-plugin-rem":146,"../node_modules/stylecow/node_modules/stylecow-plugin-variables":147,"codemirror":"codemirror","stylecow":"stylecow"}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 /*!
@@ -13756,145 +13756,6 @@ module.exports = function (stylecow) {
 };
 
 },{}],112:[function(require,module,exports){
-var Color = require('color');
-
-module.exports = function (stylecow) {
-
-	stylecow.addTask({
-		forBrowsersLowerThan: {
-			explorer: 9.0
-		},
-		filter: {
-			type: 'Declaration',
-			name: ['background', 'background-color']
-		},
-		fn: function (declaration) {
-			var fn = declaration.get({
-				type: 'Function',
-				name: ['rgba', 'hsla']
-			});
-
-			if (fn) {
-				var color = Color(fn.toString());
-				var hex = color.hexString();
-
-				if (color.alpha() == 1) {
-					return fn.replaceWith(stylecow.parse(hex, 'Hex'));
-				}
-
-				hex = hex.replace('#', '#' + Math.round(255 * color.alpha()).toString(16));
-
-				stylecow.utils.addMsFilter(declaration.getParent('Block'), 'progid:DXImageTransform.Microsoft.gradient(startColorStr="' + hex + '", endColorStr="' + hex + '")');
-			}
-		}
-	});
-};
-
-},{"color":113}],113:[function(require,module,exports){
-arguments[4][78][0].apply(exports,arguments)
-},{"color-convert":115,"color-string":116,"dup":78}],114:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"dup":79}],115:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"./conversions":114,"dup":80}],116:[function(require,module,exports){
-arguments[4][81][0].apply(exports,arguments)
-},{"color-name":117,"dup":81}],117:[function(require,module,exports){
-arguments[4][82][0].apply(exports,arguments)
-},{"dup":82}],118:[function(require,module,exports){
-var Color = require('color');
-
-module.exports = function (stylecow) {
-
-	stylecow.addTask({
-		forBrowsersLowerThan: {
-			explorer: 9.0
-		},
-		filter: {
-			type: 'Declaration',
-			name: ['background', 'background-image']
-		},
-		fn: function (declaration) {
-			var fn = declaration.get({
-				type: 'Function',
-				name: 'linear-gradient'
-			});
-
-			if (fn) {
-				var filter = getFilter(fn.toArray());
-
-				if (filter) {
-					stylecow.utils.addMsFilter(declaration.getParent('Block'), filter);
-				}
-			}
-		}
-	});
-};
-
-function getFilter (params) {
-	var direction, reverse;
-
-	switch (params.shift()) {
-		case 'top':
-		case 'to bottom':
-		case '90deg':
-			direction = 'vertical';
-			reverse = false;
-			break;
-
-		case 'bottom':
-		case 'to top':
-		case '-90deg':
-			direction = 'vertical';
-			reverse = true;
-			break;
-
-		case 'left':
-		case 'to right':
-		case '180deg':
-		case '-180deg':
-			direction = 'horizontal';
-			reverse = false;
-			break;
-
-		case 'right':
-		case 'to left':
-		case '0deg':
-		case '360deg':
-			direction = 'vertical';
-			reverse = true;
-			break;
-
-		default:
-			return;
-	}
-
-	if (direction && params.length === 2) {
-		params[0] = Color(params[0].toString()).hexString();
-		params[1] = Color(params[1].toString()).hexString();
-
-		if (reverse) {
-			params.reverse();
-		}
-
-		if (direction === 'horizontal') {
-			return 'progid:DXImageTransform.Microsoft.gradient(startColorStr="' + params[0] + '", endColorStr="' + params[1] + '", GradientType=1)';
-		}
-
-		return 'progid:DXImageTransform.Microsoft.gradient(startColorStr="' + params[0] + '", endColorStr="' + params[1] + '")';
-	}
-}
-
-},{"color":119}],119:[function(require,module,exports){
-arguments[4][78][0].apply(exports,arguments)
-},{"color-convert":121,"color-string":122,"dup":78}],120:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"dup":79}],121:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"./conversions":120,"dup":80}],122:[function(require,module,exports){
-arguments[4][81][0].apply(exports,arguments)
-},{"color-name":123,"dup":81}],123:[function(require,module,exports){
-arguments[4][82][0].apply(exports,arguments)
-},{"dup":82}],124:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	stylecow.addTask({
@@ -14009,7 +13870,7 @@ module.exports = function (stylecow) {
 	}
 };
 
-},{}],125:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 module.exports = function (stylecow) {
 	require('./src/animation')(stylecow);
 	require('./src/appearance')(stylecow);
@@ -14045,7 +13906,7 @@ module.exports = function (stylecow) {
 	require('./src/user-select')(stylecow);
 };
 
-},{"./src/animation":126,"./src/appearance":127,"./src/background":128,"./src/border":129,"./src/box-decoration-break":130,"./src/box-shadow":131,"./src/box-sizing":132,"./src/calc":133,"./src/clip-path":134,"./src/column":135,"./src/cursor":136,"./src/document":137,"./src/exclusions":138,"./src/fullscreen":139,"./src/grid":140,"./src/image-rendering":141,"./src/image-set":142,"./src/inline-block":143,"./src/linear-gradient":144,"./src/mask":145,"./src/object":146,"./src/pseudoelements":147,"./src/region":148,"./src/repeating-linear-gradient":149,"./src/scroll-snap-points":150,"./src/shapes":151,"./src/sizing":152,"./src/sticky":153,"./src/transform":154,"./src/transition":155,"./src/typography":156,"./src/user-select":157}],126:[function(require,module,exports){
+},{"./src/animation":114,"./src/appearance":115,"./src/background":116,"./src/border":117,"./src/box-decoration-break":118,"./src/box-shadow":119,"./src/box-sizing":120,"./src/calc":121,"./src/clip-path":122,"./src/column":123,"./src/cursor":124,"./src/document":125,"./src/exclusions":126,"./src/fullscreen":127,"./src/grid":128,"./src/image-rendering":129,"./src/image-set":130,"./src/inline-block":131,"./src/linear-gradient":132,"./src/mask":133,"./src/object":134,"./src/pseudoelements":135,"./src/region":136,"./src/repeating-linear-gradient":137,"./src/scroll-snap-points":138,"./src/shapes":139,"./src/sizing":140,"./src/sticky":141,"./src/transform":142,"./src/transition":143,"./src/typography":144,"./src/user-select":145}],114:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	//Adds -moz- vendor prefixes
@@ -14147,7 +14008,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],127:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	//Adds -moz- vendor prefixes
@@ -14186,7 +14047,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],128:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -moz- vendor prefixes
@@ -14252,7 +14113,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],129:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	//Fix old syntax in firefox <13 in border-radius
@@ -14406,7 +14267,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],130:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -webkit- vendor prefixes
@@ -14446,7 +14307,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],131:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -moz- vendor prefixes
@@ -14485,7 +14346,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],132:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	//Adds -moz- vendor prefixes
@@ -14525,7 +14386,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],133:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	//Adds -moz- vendor prefix
@@ -14584,7 +14445,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],134:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -webkit- vendor prefix
@@ -14608,7 +14469,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],135:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// Adds -moz- vendor prefixes
@@ -14648,7 +14509,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],136:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -moz- vendor prefix to cursor: zoom-in / zoom-out
@@ -14762,7 +14623,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],137:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -moz- vendor prefix
@@ -14783,7 +14644,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],138:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -ms- vendor prefix
@@ -14803,7 +14664,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],139:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	//Adds -moz-full-screen vendor prefix
@@ -14893,7 +14754,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],140:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -ms- vendor prefix
@@ -14936,7 +14797,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],141:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -moz- vendor prefix
@@ -14991,7 +14852,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],142:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -webkit- vendor prefix
@@ -15026,7 +14887,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],143:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -moz- vendor prefix
@@ -15055,7 +14916,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],144:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// adds -moz- vendor prefix
@@ -15252,7 +15113,7 @@ function fixDirection (direction) {
 	}
 }
 
-},{}],145:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -webkit- vendor prefix
@@ -15275,7 +15136,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],146:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -o- vendor prefix
@@ -15295,7 +15156,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],147:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// Add -moz- vendor prefix in ::input-placeholder and ::selection for Firefox > 18
@@ -15404,7 +15265,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],148:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// Adds -webkit- vendor prefix
@@ -15458,7 +15319,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],149:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// adds -moz- vendor prefix
@@ -15545,7 +15406,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],150:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// adds -ms- vendor prefix
@@ -15565,7 +15426,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],151:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// adds -webkit- vendor prefix
@@ -15586,7 +15447,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],152:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Firefox supports "-moz-available" property rather than "-moz-fill-available"',
@@ -15647,7 +15508,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],153:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Adds -webkit- vendor prefix
@@ -15671,7 +15532,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],154:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 module.exports = function (stylecow) {
 	
 	//Add -moz- vendor prefix
@@ -15746,7 +15607,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],155:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// Adds -moz- vendor prefix
@@ -15851,7 +15712,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],156:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// Adds -moz- vendor prefix
@@ -16025,7 +15886,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],157:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	// Adds -moz- vendor prefix
@@ -16082,7 +15943,7 @@ module.exports = function (stylecow) {
 	});
 };
 
-},{}],158:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	stylecow.forBrowsersLowerThan({
@@ -16175,7 +16036,7 @@ function toPixels (unit) {
 	return 16;
 };
 
-},{}],159:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 module.exports = function (stylecow) {
 
 	//Use var() function

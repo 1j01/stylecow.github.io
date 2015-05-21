@@ -13,8 +13,8 @@ require('../node_modules/stylecow/node_modules/stylecow-plugin-extend')(stylecow
 require('../node_modules/stylecow/node_modules/stylecow-plugin-fixes')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-flex')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-matches')(stylecow);
-require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-background-alpha')(stylecow);
-require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-linear-gradient')(stylecow);
+//require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-background-alpha')(stylecow);
+//require('../node_modules/stylecow/node_modules/stylecow-plugin-msfilter-linear-gradient')(stylecow);
 //'./node_modules/stylecow/node_modules/stylecow-plugin-msfilter-transform',
 require('../node_modules/stylecow/node_modules/stylecow-plugin-nested-rules')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-prefixes')(stylecow);
@@ -22,11 +22,11 @@ require('../node_modules/stylecow/node_modules/stylecow-plugin-rem')(stylecow);
 require('../node_modules/stylecow/node_modules/stylecow-plugin-variables')(stylecow);
 
 stylecow.minSupport({
-	explorer: false,
-	firefox: false,
-	chrome: false,
-	safari: false,
-	opera: false,
-	android: false,
-	ios: false
+	explorer: 8,
+	firefox: 30,
+	chrome: 35,
+	safari: 6,
+	opera: 22,
+	android: 4,
+	ios: 6
 });
