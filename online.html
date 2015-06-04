@@ -27,6 +27,8 @@
 
         <div class="input">
             <textarea id="css-input">/* Stylecow code demo */
+
+/* Variables */
 :root {
     --size: 25px;
     --alpha: 0.5;
@@ -35,12 +37,20 @@
 @custom-media --mobile screen AND (max-width: 480px);
 @custom-selector --heading h1, h2, h3, h4, h5, h6;
 
+/* Placeholders */
 %grid {
     display: flex;
     flex-wrap: wrap;
 }
 
+%grid-narrow {
+    @extend %grid;
+    width: 50%;
+}
+
+/* Nested rules */
 body {
+    /* calc() resolution */
     max-width: calc(var(--size) * 3);
 
     p {
@@ -50,6 +60,7 @@ body {
 }
 
 article {
+    /* css4 color manipulation */
     color: color(red a(var(--alpha)));
     font-size: 2rem;
 
@@ -61,12 +72,14 @@ article {
         font-weight: normal;
     }
 
+    /* css4 :matches() */
     &amp;:matches(.is-active, .is-selected, :focus) :matches(span, strong) {
         border: solid var(--size) color(orange tint(50%));
         background: linear-gradient(to bottom, color(red a(var(--alpha))), black);
     }
 }
 
+/* @extend */
 ul.grid {
     @extend %grid;
     margin: initial;
@@ -77,11 +90,10 @@ ul.grid {
         content: 'hi "you"';
     }
 }
-article.grid {
-    > div {
-        @extend %grid;
-    }
+ul.grid-narrow {
+    @extend %grid-narrow;
 }
+
 </textarea>
         </div>
 
