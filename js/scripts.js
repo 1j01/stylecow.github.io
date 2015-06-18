@@ -5560,18 +5560,22 @@ module.exports={"eras":{"e-39":"39 versions back","e-38":"38 versions back","e-3
 				.setName('~');
 		}
 
+		if (reader.get(-2)[0] === t.WHITESPACE) {
+			return (new stylecow.Combinator())
+				.setSource(reader)
+				.setName(' ');
+		}
+	};
+
+	stylecow.Combinator.createJoinCombinator = function (reader) {
+		var t = stylecow.Tokens;
+
 		if (reader.currToken[0] === t.AMPERSAND) {
 			reader.move();
 
 			return (new stylecow.Combinator())
 				.setSource(reader)
 				.setName('&');
-		}
-		
-		if (reader.get(-2)[0] === t.WHITESPACE) {
-			return (new stylecow.Combinator())
-				.setSource(reader)
-				.setName(' ');
 		}
 	};
 
@@ -5580,6 +5584,10 @@ module.exports={"eras":{"e-39":"39 versions back","e-38":"38 versions back","e-3
 			value: function () {
 				if (this.name === ' ' || this.name === '&') {
 					return this.name;
+				}
+
+				if (this.index() === 0) {
+					return this.name + ' ';
 				}
 
 				return ' ' + this.name + ' ';
@@ -5592,7 +5600,10 @@ module.exports={"eras":{"e-39":"39 versions back","e-38":"38 versions back","e-3
 					return code.append(this.name);
 				}
 
-				code.appendStyle('selector-combinator-before');
+				if (this.index() !== 0) {
+					code.appendStyle('selector-combinator-before');
+				}
+
 				code.append(this.name);
 				code.appendStyle('selector-combinator-after');
 			}
@@ -5901,15 +5912,10 @@ module.exports={"eras":{"e-39":"39 versions back","e-38":"38 versions back","e-3
 		var t = stylecow.Tokens;
 		var element = (new stylecow.Selector()).setSource(reader);
 
-		//Starts by ampersand
-		if (reader.currToken[0] === t.AMPERSAND) {
-			element.push(stylecow.Combinator.create(reader) || error());
-		}
-
 		//Start by a combinator?
 		var child = stylecow.Combinator.create(reader);
 
-		if (child && child.name !== ' ') {
+		if (child) {
 			element.push(child);
 		}
 
@@ -5931,6 +5937,7 @@ module.exports={"eras":{"e-39":"39 versions back","e-38":"38 versions back","e-3
 				|| stylecow.PseudoClass.create(reader)
 				|| stylecow.PseudoElement.create(reader)
 				|| stylecow.PlaceholderSelector.create(reader)
+				|| stylecow.Combinator.createJoinCombinator(reader)
 				|| reader.error()
 			);
 
@@ -5939,14 +5946,17 @@ module.exports={"eras":{"e-39":"39 versions back","e-38":"38 versions back","e-3
 			if (child) {
 				element.push(child);
 			}
-
 		} while (reader.currToken[0] !== t.COMMA && reader.currToken[0] !== t.EOF);
 
 		if (!element.length) {
 			reader.error();
 		}
 
-		//Remove the last combinator if it's a space
+		//Remove the first and last combinators if it's a space
+		if (element.length && element[0].type === 'Combinator' && element[0].name === ' ') {
+			element.shift();
+		}
+
 		if (element.length && element[element.length - 1].type === 'Combinator' && element[element.length - 1].name === ' ') {
 			element.pop();
 		}
@@ -14043,7 +14053,7 @@ module.exports = function (stylecow) {
 
 					// resolve nested @media
 					if (child.type === 'AtRule' && child.name === 'media') {
-						nestedMedia(parentRule, child, index + offset);
+						nestedRuleMedia(parentRule, child, index + offset);
 						++offset;
 					}
 
@@ -14060,7 +14070,33 @@ module.exports = function (stylecow) {
 		}
 	});
 
-	function nestedMedia(parentRule, media, parentRuleIndex) {
+	//Merge nested @media
+	stylecow.addTask({
+		filter: {
+			type: 'AtRule',
+			name: 'media'
+		},
+		fn: function (parentMedia) {
+			var index = parentMedia.index();
+			var offset = 1;
+
+			parentMedia
+				.getChild('Block')
+				.getChildren({
+					type: 'AtRule',
+					name: 'media'
+				})
+				.forEach(function (child) {
+					nestedMedia(parentMedia, child, index + offset);
+				});
+
+			if (!parentMedia.getChild('Block').length) {
+				parentRule.remove();
+			}
+		}
+	});
+
+	function nestedRuleMedia(parentRule, media, parentRuleIndex) {
 		var rule = new stylecow.Rule();
 
 		rule.push(parentRule.getChild('Selectors').clone());
@@ -14088,6 +14124,22 @@ module.exports = function (stylecow) {
 		parentRule.getParent().splice(parentRuleIndex, 0, media);
 	}
 
+	function nestedMedia(parentMedia, media, parentMediaIndex) {
+		var mediaQueries = media.getChild('MediaQueries');
+		var mergedMediaQueries = new stylecow.MediaQueries();
+
+		parentMedia
+			.getChild('MediaQueries')
+			.forEach(function (parentMediaQuery) {
+				mediaQueries.forEach(function (mediaQuery) {
+					mergedMediaQueries.push(mergeMediaQuery(parentMediaQuery.clone(), mediaQuery.clone()));
+				});
+			});
+
+		mediaQueries.replaceWith(mergedMediaQueries);
+		parentMedia.getParent().splice(parentMediaIndex, 0, media);
+	}
+
 	function nestedRule(parentRule, rule, parentRuleIndex) {
 		var selectors = rule.getChild('Selectors');
 		var mergedSelectors = new stylecow.Selectors();
@@ -14096,7 +14148,7 @@ module.exports = function (stylecow) {
 			.getChild('Selectors')
 			.forEach(function (parentSelector) {
 				selectors.forEach(function (selector) {
-					mergedSelectors.push(merge(parentSelector.clone(), selector.clone()));
+					mergedSelectors.push(mergeSelector(parentSelector.clone(), selector.clone()));
 				});
 			});
 
@@ -14104,39 +14156,55 @@ module.exports = function (stylecow) {
 		parentRule.getParent().splice(parentRuleIndex, 0, rule);
 	}
 
-	function merge (selector, appendedSelector) {
-		var firstElement = appendedSelector.shift();
+	function mergeSelector (selector, appendedSelector) {
+		var joinCombinator = appendedSelector.getChild({
+			type: 'Combinator',
+			name: '&'
+		});
 
-		// html { .foo {  => html .foo
-		if (firstElement.type !== 'Combinator') {
-			var separator = (new stylecow.Combinator()).setName(' ');
-			selector.push(separator);
-			selector.push(firstElement);
+		if (!joinCombinator) {
+			if (appendedSelector[0].type !== 'Combinator') {
+				appendedSelector.unshift((new stylecow.Combinator()).setName(' '));
+			}
+			joinCombinator = (new stylecow.Combinator()).setName('&');
+			appendedSelector.unshift(joinCombinator);
 		}
-		
-		// html { >.foo {  => html>.foo
-		else if (firstElement.name !== '&') {
-			selector.push(firstElement);
-		}
 
-		// .foo { &html {  => html.foo
-		else if (appendedSelector.length && appendedSelector[0].is('TypeSelector')) {
-			firstElement = appendedSelector.shift();
+		//resolve .foo&html => html.foo
+		var next = joinCombinator.next();
 
+		if (next && next.is('TypeSelector')) {
 			var combinators = selector.getChildren('Combinator');
 
 			if (combinators.length) {
-				combinators.pop().after(firstElement);
+				combinators.pop().after(next);
 			} else {
-				selector.unshift(firstElement);
+				selector.unshift(next);
 			}
 		}
 
-		while (appendedSelector[0]) {
-			selector.push(appendedSelector[0]);
+		while (selector[0]) {
+			joinCombinator.before(selector.shift());
 		}
 
-		return selector;
+		joinCombinator.remove();
+
+		return appendedSelector;
+	}
+
+	function mergeMediaQuery (mediaQueries, appendedMediaQuery) {
+		var expression = new stylecow.ConditionalExpression();
+
+		while (appendedMediaQuery[0]) {
+			expression.push(appendedMediaQuery.shift());
+		}
+
+		var joinKeyword = (new stylecow.Keyword()).setName('and');
+
+		mediaQueries.push(joinKeyword);
+		mediaQueries.push(expression);
+
+		return mediaQueries;
 	}
 };
 
