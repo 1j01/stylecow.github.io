@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 			options: {
 				require: [
 					'./node_modules/codemirror/lib/codemirror:codemirror',
-					'./node_modules/stylecow:stylecow'
+					'./node_modules/stylecow-core:stylecow'
 				]
 			}
 		},
