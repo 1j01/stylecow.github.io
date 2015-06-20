@@ -20,7 +20,7 @@
     "stylecow-plugin-msfilter-background-alpha": "*",
     "stylecow-plugin-msfilter-linear-gradient": "*",
     "stylecow-plugin-msfilter-transform": "*",
-    "stylecow-plugin-nested-rules": "*",
+    "stylecow-plugin-nested-rules": "^4.2.1",
     "stylecow-plugin-prefixes": "*",
     "stylecow-plugin-rem": "*",
     "stylecow-plugin-variables": "*"

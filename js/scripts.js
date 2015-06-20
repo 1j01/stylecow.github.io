@@ -13984,10 +13984,6 @@ module.exports = function (stylecow) {
 				.forEach(function (child) {
 					nestedMedia(parentMedia, child, index + offset);
 				});
-
-			if (!parentMedia.getChild('Block').length) {
-				parentRule.remove();
-			}
 		}
 	});
 
