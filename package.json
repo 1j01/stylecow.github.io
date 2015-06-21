@@ -6,6 +6,7 @@
     "grunt": "*",
     "grunt-browserify": "*",
     "grunt-contrib-uglify": "*",
+    "grunt-contrib-clean": "*",
     "grunt-stylecow": "^2.1.0",
     "stylecow-core": "*",
     "stylecow-plugin-calc": "*",

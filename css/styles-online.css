@@ -95,6 +95,7 @@ header {
     left: 0;
     width: 100%;
     height: 100%;
+    font-size: 14px;
 }
 
 #error {
@@ -108,4 +109,5 @@ header {
     max-width: 300px;
     border-radius: 3px;
     display: none;
+    width: 50%;
 }

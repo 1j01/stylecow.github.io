@@ -10,7 +10,10 @@ module.exports = function(grunt) {
 				require: [
 					'./node_modules/codemirror/lib/codemirror:codemirror',
 					'./node_modules/stylecow-core:stylecow'
-				]
+				],
+				browserifyOptions: {
+					ignoreMissing: true
+				}
 			}
 		},
 		uglify: {
@@ -19,6 +22,9 @@ module.exports = function(grunt) {
 				dest: 'js/scripts.min.js'
 			}
 		},
+		clean: [
+			'js/scripts.js'
+		],
 		stylecow: {
 			options: require('./stylecow.json'),
 			dist: {
@@ -32,7 +38,8 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-browserify');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-stylecow');
 
-	grunt.registerTask('default', ['browserify', 'uglify', 'stylecow']);
+	grunt.registerTask('default', ['browserify', 'uglify', 'clean', 'stylecow']);
 };

@@ -15,7 +15,7 @@ require('stylecow-plugin-flex')(stylecow);
 require('stylecow-plugin-matches')(stylecow);
 require('stylecow-plugin-msfilter-background-alpha')(stylecow);
 require('stylecow-plugin-msfilter-linear-gradient')(stylecow);
-//require('stylecow-plugin-msfilter-transform')(stylecow);
+require('stylecow-plugin-msfilter-transform')(stylecow);
 require('stylecow-plugin-nested-rules')(stylecow);
 require('stylecow-plugin-prefixes')(stylecow);
 require('stylecow-plugin-rem')(stylecow);

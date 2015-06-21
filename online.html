@@ -6,7 +6,7 @@
         <title>stylecow online css editor</title>
 
         <link rel="stylesheet" type="text/css" href="css/styles-online.min.css">
-        <script type="text/javascript" src="js/scripts.js"></script>
+        <script type="text/javascript" src="js/scripts.min.js"></script>
     </head>
 
     <body>
@@ -21,8 +21,6 @@
             </h1>
 
             <a href="https://github.com/stylecow/stylecow/issues">Something wrong?</a>
-
-            <button id="css-convert">Convert</button>
         </header>
 
         <div class="input">
@@ -68,13 +66,12 @@ article {
         color: gray(50%, var(--alpha));
     }
 
+    /* css4 :matches() */
     --heading {
-        font-weight: normal;
+        border: solid var(--size) color(orange tint(50%));
     }
 
-    /* css4 :matches() */
-    &amp;:matches(.is-active, .is-selected, :focus) :matches(span, strong) {
-        border: solid var(--size) color(orange tint(50%));
+    &amp;:matches(.is-active, :focus) :matches(span, strong) {
         background: linear-gradient(to bottom, color(red a(var(--alpha))), black);
     }
 }
@@ -107,34 +104,36 @@ ul.grid-narrow {
             (function () {
                 var stylecow = require('stylecow');
                 var CodeMirror = require('codemirror');
-
                 var error = document.getElementById('error');
+
                 var input = CodeMirror.fromTextArea(document.getElementById('css-input'), {
                     mode: 'css',
-                    lineNumbers: true,
+                    lineNumbers: false,
                     lineWrapping: true
                 });
                 var output = CodeMirror.fromTextArea(document.getElementById('css-output'), {
                     mode: 'css',
-                    lineNumbers: true,
+                    lineNumbers: false,
                     readOnly: true,
                     lineWrapping: true
                 });
 
-                document
-                    .getElementById('css-convert')
-                    .addEventListener('click', function () {
-                        error.style.display = 'none';
+                var run = function () {
+                    error.style.display = 'none';
 
-                        try {
-                            var css = stylecow.parse(input.getValue());
-                            stylecow.run(css);
-                            output.setValue(css.toString());
-                        } catch (e) {
-                            error.innerHTML = e.message;
-                            error.style.display = 'block';
-                        }
-                    });
+                    try {
+                        var css = stylecow.parse(input.getValue());
+                        stylecow.run(css);
+                        output.setValue(css.toString());
+                    } catch (e) {
+                        error.innerHTML = e.message;
+                        error.style.display = 'block';
+                    }
+                };
+
+                input.on('changes', run);
+
+                run();
             })();
         </script>
 <script>
