@@ -5,8 +5,8 @@
     "codemirror": "^5.2.0",
     "grunt": "*",
     "grunt-browserify": "*",
-    "grunt-contrib-uglify": "*",
     "grunt-contrib-clean": "*",
+    "grunt-contrib-uglify": "*",
     "grunt-stylecow": "^2.1.0",
     "stylecow-core": "*",
     "stylecow-plugin-calc": "*",
@@ -21,9 +21,10 @@
     "stylecow-plugin-msfilter-background-alpha": "*",
     "stylecow-plugin-msfilter-linear-gradient": "*",
     "stylecow-plugin-msfilter-transform": "*",
-    "stylecow-plugin-nested-rules": "^4.2.1",
-    "stylecow-plugin-prefixes": "*",
+    "stylecow-plugin-nested-rules": "*",
+    "stylecow-plugin-prefixes": "^5.0.1",
     "stylecow-plugin-rem": "*",
-    "stylecow-plugin-variables": "*"
+    "stylecow-plugin-variables": "*",
+    "stylecow-plugin-webkit-gradient": "*"
   }
 }

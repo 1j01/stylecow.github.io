@@ -1,32 +1,31 @@
-var stylecow = require('stylecow-core');
+require('stylecow-core')
+	.use(require('stylecow-plugin-calc'))
+	.use(require('stylecow-plugin-color'))
+	.use(require('stylecow-plugin-custom-media'))
+	.use(require('stylecow-plugin-custom-selector'))
+	.use(require('stylecow-plugin-extend'))
+	.use(require('stylecow-plugin-fixes'))
+	.use(require('stylecow-plugin-flex'))
+	.use(require('stylecow-plugin-matches'))
+	.use(require('stylecow-plugin-msfilter-background-alpha'))
+	.use(require('stylecow-plugin-msfilter-linear-gradient'))
+	.use(require('stylecow-plugin-msfilter-transform'))
+	.use(require('stylecow-plugin-nested-rules'))
+	.use(require('stylecow-plugin-prefixes'))
+	.use(require('stylecow-plugin-rem'))
+	.use(require('stylecow-plugin-variables'))
+	.use(require('stylecow-plugin-webkit-gradient'))
+	.minSupport({
+		explorer: 8,
+		firefox: 30,
+		chrome: 35,
+		safari: 6,
+		opera: 22,
+		android: 4,
+		ios: 6
+	});
 
 require('codemirror');
 
-//require all dinamic modules for browserify
-require('../node_modules/codemirror/mode/css/css');
-
-require('stylecow-plugin-calc')(stylecow);
-require('stylecow-plugin-color')(stylecow);
-require('stylecow-plugin-custom-media')(stylecow);
-require('stylecow-plugin-custom-selector')(stylecow);
-require('stylecow-plugin-extend')(stylecow);
-require('stylecow-plugin-fixes')(stylecow);
-require('stylecow-plugin-flex')(stylecow);
-require('stylecow-plugin-matches')(stylecow);
-require('stylecow-plugin-msfilter-background-alpha')(stylecow);
-require('stylecow-plugin-msfilter-linear-gradient')(stylecow);
-require('stylecow-plugin-msfilter-transform')(stylecow);
-require('stylecow-plugin-nested-rules')(stylecow);
-require('stylecow-plugin-prefixes')(stylecow);
-require('stylecow-plugin-rem')(stylecow);
-require('stylecow-plugin-variables')(stylecow);
-
-stylecow.minSupport({
-	explorer: 8,
-	firefox: 30,
-	chrome: 35,
-	safari: 6,
-	opera: 22,
-	android: 4,
-	ios: 6
-});
+//require dinamic modules for browserify
+require('codemirror/mode/css/css');
